@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: configMap-test
+  name: "configmap-test"
   namespace: roboshop
 data:
   APP_ENV: "dev"
@@ -11,7 +11,7 @@ data:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: config-map-pod
+  name: "config-map-pod"
   labels:
      project: roboshop
      env: dev
