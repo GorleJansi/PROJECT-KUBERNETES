@@ -13,7 +13,8 @@ spec:
   template:     # pod definition
     metadata:
       labels:
-        purpose: "replicaset-match"        
+        purpose: "replicaset-match"   
+        name: "replicaset-pods"     
     spec:
       containers:
         - name: "replicaset-c"
