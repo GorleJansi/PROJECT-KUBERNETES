@@ -6,7 +6,7 @@ metadata:
 data:
    project: roboshop
    env: dev
-   k8s: true
+   k8s: "true"
 
 ---
 apiVersion: v1
@@ -20,12 +20,12 @@ spec:
       image: nginx
       env:
         - name:  project
-          valuefrom: 
+          valueFrom:
             configMapKeyRef:
               name: config-map2
               key: project
         - name: env
-          valuefrom:
+          valueFrom:
             configMapKeyRef:
               name: config-map2  
               key: env   
