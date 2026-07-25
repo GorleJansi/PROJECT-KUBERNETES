@@ -12,6 +12,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "config-map-pod"
+  namespace: roboshop
   labels:
      project: roboshop
      env: dev
@@ -25,9 +26,9 @@ spec:
       image: nginx
       ports:
         - containerPort: 80
-      envfrom:
+      envFrom:
         - configMapRef:
-            name: configMap-test 
+            name: configmap-test
 
 
 # configMap is used to store nonsenstive configs 
