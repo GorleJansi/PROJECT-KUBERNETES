@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata: 
-  name: resourcelimit
+  name: resourcelimit-Pod
   namespace: roboshop
   labels:
     project: limit
@@ -10,7 +10,7 @@ metadata:
     context: "apply limits to resources of node for a container"   
 spec:
   containers:
-     - name: limit
+     - name: limit-c
        image: nginx
        ports:
         - containerPort: 80
