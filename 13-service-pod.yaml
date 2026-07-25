@@ -12,4 +12,6 @@ spec:
   containers:
     - name: "cluster-ip-c"
       image: nginx   
-       
+
+
+

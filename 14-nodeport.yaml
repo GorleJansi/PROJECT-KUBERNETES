@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "service-nodeport"
+spec:
+  type: NodePort
+  selector:
+    is:  "service-nodeport-match" 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodeport: 30080
+
+
+# Node IP:30080
+#       ↓
+# Service port:80
+#       ↓
+# Pod port:80
+
+

@@ -25,3 +25,8 @@ spec:
 # ClusterIP  = internal access inside cluster only
 # NodePort   = access from outside using NodeIP:NodePort
 # LoadBalancer = cloud load balancer for external access
+
+
+# kubectl get endpoints <service-name> -n roboshop ----> check endpoints connected to the service
+# kubectl get pod <pod-name> -n <namespace>
+# kubectl get service <service-name> -n <namespace>
