@@ -23,11 +23,4 @@ spec:
           ports:
             - containerPort: 80    
 
-# kubectl apply -f 18-replicaset.yaml
-# kubectl get replicasets -n roboshop
-# kubectl describe replicaset <replicaset-name> -n roboshop
-# kubectl get pods -n roboshop      
-# kubectl get pods -n roboshop -l name=replicaset-pods
-# kunbectl delete replicaset <replicaset-name> -n roboshop
-
-# replicaset only takecare of creating pods current pods== desired replicas it will not check config or image version update
+# 
