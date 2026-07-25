@@ -14,6 +14,7 @@ spec:
         - containerPort: 80
     - name: multi-pod-test-c2
       image: mysql
+      command: ["sleep", "1000"]
       ports:
         - containerPort: 3306
      
