@@ -17,3 +17,8 @@ spec:
 # Service selector labels must be a subset of Pod labels.
 # All selector key-value pairs must match.
 # Pod can have extra labels.
+
+# user--> lb--->check selector label matching any pod labels in any nodes of the cluster if match in label then foward traffic there
+# level-1: AWS LB targets only healthy nodes
+# level-2: After traffic reaches the node, Kubernetes checks the Service selector.
+#          mysql-pod and redis-pod are running on the same node, they will not receive this traffic.omly frontend-pod will recive if match labels

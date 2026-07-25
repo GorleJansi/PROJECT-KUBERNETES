@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ReplicaSet
+metadata:
+  name: "replicaset-test"
+  labels:
+      project: roboshop
+      author: jansi
+spec:
+  replicas: 10
+  selector: 
+    matchLabels:
+      purpose: "replicaset-match"   # labels of pods which matches these labels are added
+  template:     # pod definition
+    metadata:
+      labels:
+        purpose: "replicaset-match"        
+    spec:
+      containers:
+        - name: "replicaset-c"
+          image: nginx
+          ports:
+            - containerPort: 80    
