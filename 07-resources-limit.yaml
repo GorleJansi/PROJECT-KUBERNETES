@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata: 
-  name: resourcelimit-Pod
+  name: resourcelimit-pod
   namespace: roboshop
   labels:
     project: limit
@@ -17,7 +17,7 @@ spec:
        resources:
         requests:
           cpu: "100m"
-          mem: "128Mi"
+          memory: "128Mi"
         limits:
           cpu: "500m"
           memory: "256Mi"   
