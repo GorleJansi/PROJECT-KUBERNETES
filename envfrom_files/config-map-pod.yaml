@@ -22,7 +22,8 @@ spec:
         name: app-config
 
 
-
+# A ConfigMap is mounted as a volume.
+# Kubernetes takes each key in the ConfigMap and creates a file inside the container.
 
 # Inside the container, Kubernetes creates files like this:
 # /etc/config/APP_ENV
@@ -32,3 +33,12 @@ spec:
 
 # Use env variables when app reads config from ENV.
 # Use file mount when app expects config files, certificates, keys, or .properties files.
+# volumeMounts.name must match volumes.name
+# configMap.name must match existing ConfigMap name
+# mountPath is the folder path inside the container
+
+# ConfigMap mounted as env:
+# App reads config using environment variables.
+
+# ConfigMap mounted as file:
+# App reads config by opening files from mountPath.
