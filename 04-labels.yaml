@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod 
+metadata: 
+  name: label-test
+  namespace: roboshop
+  labels:                    
+    project: roboshop-labels
+    env: dev
+spec:
+  - conatiners:
+    - name: label-test 
+      image: nginx
+      ports:
+        - containerPort: 80
+
+
+# Labels are used to organize, identify, and search Kubernetes resources.
+# They are also used by selectors, such as Service selectors and Deployment selectors,
+# to match the correct Pods.(selector labels == labels in pods)
