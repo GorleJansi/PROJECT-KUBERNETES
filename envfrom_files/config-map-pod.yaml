@@ -14,9 +14,11 @@ spec:
     - name: "mount-config-map-c"
       image: nginx
       volumeMounts:
-        - mountPath: /etc/config
+        - name: app-config-volume
+          mountPath: /etc/config
   volumes:
-    - configMap:
+    - name: app-config-volume
+      configMap:
         name: app-config
 
 
@@ -27,3 +29,6 @@ spec:
 # /etc/config/APP_PORT       
 # ConfigMap/Secret key becomes file name.
 # ConfigMap/Secret value becomes file content.
+
+# Use env variables when app reads config from ENV.
+# Use file mount when app expects config files, certificates, keys, or .properties files.
