@@ -14,7 +14,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80          #service port
-      targetport: 80    #container port
+      targetPort: 80    #container port
 
 # That Service sends traffic to Pods with labels same as service selector
 # selector   = which Pods this Service should send traffic to
