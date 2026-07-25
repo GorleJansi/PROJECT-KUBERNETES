@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: annotation-test
+  namespace: roboshop
+  labels:                  # “Which resources should I find(kubectl get pod <name> -l key=value)/connect(deployment)/manage(service)?”
+    project: learning
+    env: dev
+  annotations:             # “What extra information should I attach to this resource?” documentation
+    git: https://github.com/GorleJansi
+    linkedin:  https://www.linkedin.com/in/gorlejansi/
+    description: "This pod is for testing annotations"
+    owner: "jansi"
+
+spec:
+  containers:
+    - name: annotation-test
+      image: nginx
+
+
+
+
+# Labels      = used to search/select/group resources
+# Annotations = used to store extra metadata/information
