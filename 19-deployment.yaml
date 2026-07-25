@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "deployment-test"
+  namespace: roboshop
+  labels:
+    project: "deployment-project"
+    author: "jansi"
+spec:
+  replicas: 5    # 1
+  selector:       # 2
+    matchLabels:  # 3
+      purpose: "deploy-match-labels"    # these labels are used to select pods 
+  template:      # 4
+    metadata:
+      labels:
+        purpose: "deploy-match-labels"  # match with matchlabels
+        lb: "lb-match-label"
+    spec:
+      containers:
+        - name: "deploy-pods-c"
+          image:  caddy:latest
+          ports:
+            - containerPort: 80
+
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: "lb-test"
+spec:
+  type: LoadBalancer
+  selector:
+     lb: "lb-match-label"
+  ports:
+    - protcol: TCP
+      port: 80
+      targetPort: 80
+
+      
