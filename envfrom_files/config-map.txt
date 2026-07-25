@@ -1,0 +1,8 @@
+kubectl create configmap app-config --from-env-file=app.env -n roboshop
+
+
+check:
+kubectl get configmap app-config -n roboshop -o yaml
+
+--from-env-file = use as environment variables
+--from-file     = mount as files inside container

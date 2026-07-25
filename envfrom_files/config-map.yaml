@@ -1,0 +1,10 @@
+# Mounting ConfigMap/Secret as files means Kubernetes creates files inside the container from ConfigMap or Secret data.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: roboshop
+data:
+  APP_ENV: dev
+  APP_PORT: "8080"

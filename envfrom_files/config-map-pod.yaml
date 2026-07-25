@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: "mount-config-map-pod"
+  namespace: roboshop
+  labels:
+    project: mlops
+    env: qa
+  annotations:
+    author: jansi
+    course: mlops-join
+spec:
+  containers:
+    - name: "mount-config-map-c"
+      image: nginx
+      volumeMounts:
+        - mountPath: /etc/config
+  volumes:
+    - configMap:
+        name: app-config
+
+
+
+
+# Inside the container, Kubernetes creates files like this:
+# /etc/config/APP_ENV
+# /etc/config/APP_PORT       
+# ConfigMap/Secret key becomes file name.
+# ConfigMap/Secret value becomes file content.
