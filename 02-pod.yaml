@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metdata: 
+  name: test-pod        #name of pod
+  labels:
+     project: roboshop
+     env: dev
+spec:
+  conatiners:
+     - name: nginx-container    #name of container
+       image: nginx
+       ports:
+         - containerport:  80   
+
+
+when the Pod template in a workload resource is changed, the controller creates new Pods based on the updated template instead of updating the existing Pods.   
+# pod indiviadual need to be maintained by enginner but if created using workload resources then will be managed,self healing,rollout deployment if change in image version and to update config values for the existing pod delete the pod then controller will create new with updated configs     
