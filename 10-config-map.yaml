@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: "config-map2"
+  namespace: roboshop
+data:
+   project: roboshop
+   env: dev
+   k8s: true
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "config-pod"
+  namespace: roboshop  
+spec:
+  containers: 
+    - name: "configmap-c"
+      image: nginx
+      env:
+        - name:  project
+          valuefrom: 
+            configMapKeyRef:
+              name: config-map2
+              key: project
+        - name: env
+          valuefrom:
+            configMapKeyRef:
+              name: config-map2  
+              key: env   
+                
+
+                # Use ConfigMap values as environment variables
