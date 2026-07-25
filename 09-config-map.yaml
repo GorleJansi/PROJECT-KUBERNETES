@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configMap-test
+  namespace: roboshop
+data:
+  APP_ENV: "dev"
+  APP_PORT: "8080"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: config-map-pod
+  labels:
+     project: roboshop
+     env: dev
+  annotations:
+    author: jansi
+    gmail: jansi2001@gmail.com
+    context: runtime env configs to containers from configmaps
+spec:
+  containers: 
+    - name: config-map-c
+      image: nginx
+      ports:
+        - containerPort: 80
+      envfrom:
+        - configMapRef:
+            name: configMap-test 
+
+
+# configMap is used to store nonsenstive configs 

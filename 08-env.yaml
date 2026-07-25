@@ -20,7 +20,7 @@ spec:
           value: "8080"
           
         
-  env is used to pass environment variables into a container.      
-  Environment variables are used to pass runtime configuration into containers, such as database host, service URLs, log level, feature flags, credentials from Secrets, config from ConfigMaps, and pod metadata. This avoids hardcoding values inside the image.
+  # env is used to pass environment variables into a container.      
+  # Environment variables are used to pass runtime configuration into containers, such as database host, service URLs, log level, feature flags, credentials from Secrets, config from ConfigMaps, and pod metadata. This avoids hardcoding values inside the image.
   
   
