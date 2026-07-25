@@ -10,8 +10,8 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
-      nodePort: 30080
+      targetPort: 80.     # Pod/container port
+      nodePort: 30080     #Port opened on every worker node
 
 
 # Node IP:30080
@@ -21,3 +21,5 @@ spec:
 # Pod port:80
 # opens 30080 on all nodes and to access the pod we can use any nodeip:nodeport will will call nodeportservice and kubernetes dns converts to clusterip which will call any endpoints
 
+# NodePort is not given to a Pod.NodePort is given to a Service.
+# That Service opens the same port on every worker node.

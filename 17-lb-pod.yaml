@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: "lb-pod"
+  namespace: roboshop
+  labels:
+    is: "LoadBalancer-match"
+    author: jansi
+spec:
+  containers:
+    - name: "lb-c"
+      image: nginx
+      ports:
+        - containerPort: 80
+         
