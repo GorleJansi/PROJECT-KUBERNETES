@@ -16,4 +16,7 @@ spec:
       image: almalinux:9
       command: ["sleep", "1000"]
 
-     
+# kubectl get pods -n roboshop    ---> get all pods in specific namespace(specfic project level resources)
+# kubectl describe pod multi-pod-test -n roboshop   ---> to get detailes of conatiners in the pod and other pod details
+# kubectl logs multi-pod-test -c multi-pod-test-c1 -n roboshop    ---> to get logs of specific container
+# kubectl exec -it multi-pod-test -c multi-pod-test-c2 -n roboshop -- sh     ---> to log into  specific container

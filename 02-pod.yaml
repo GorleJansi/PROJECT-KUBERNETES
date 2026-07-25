@@ -15,3 +15,10 @@ spec:
 
 # When the Pod template in a workload resource is changed, the controller creates new Pods based on the updated template instead of updating the existing Pods.
 # Individual Pods must be maintained manually. Workload resources provide self-healing, rollout updates, and replacement Pods when configuration changes.
+
+# kubectl get nodes 
+# kubectl get pods -n roboshop
+# kubectl describe pod test-pod -n roboshop 
+# kubectl exec -it test-pod -n roboshop -- bash
+
+
