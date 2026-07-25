@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: error-test
+  namespace: roboshop
+spec:
+  containers:
+    - name: error-test
+      image: almalinux
+
+
+
+# CrashLoopBackOff
+# Your container image was pulled and container started, but the process inside the container keeps crashing/exiting.
+# pull image,create container,start container after starting container to kep it alive we need main process to run continously   
+
+# kubectl get pods -n roboshop
+# kubectl describe pod <pod-name> -n roboshop
+# kubectl logs <pod-name> -n roboshop
+# kubectl logs <pod-name> -n roboshop --previous --> show prev container logs; current container may already have restarted.
+
+# ImagePullBackOff
+# Kubernetes cannot download the container image.incorrect image:tag name,Private image needs image pull secret
+
+# ImagePullBackOff = container never started because image cannot be pulled
+# CrashLoopBackOff = container started, then crashed repeatedly
