@@ -32,3 +32,6 @@ spec:
 
 
 # configMap is used to store nonsenstive configs 
+# kubectl get configmap -n <namespace>    -->all config maps
+# kubectl describe configmap <name> -n <namespace>    ---> describe specific config map
+# kubectl get configmap <name> -n <namespace> -o yaml --> specific config maps
