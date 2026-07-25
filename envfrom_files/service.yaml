@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: roboshop
+  annotations:
+    author: jansi
+    course: devops
+spec:
+  type: ClusterIP
+  selector:
+    component: frontend
+    env: dev
+  ports:
+    - protocol: TCP
+      port: 80          #service port
+      targetport: 80    #container port
+
+# That Service sends traffic to Pods with labels same as service selector
+# selector   = which Pods this Service should send traffic to
+# port       = Service port
+# targetPort = container/pod port
+
+
+# ClusterIP  = internal access inside cluster only
+# NodePort   = access from outside using NodeIP:NodePort
+# LoadBalancer = cloud load balancer for external access
