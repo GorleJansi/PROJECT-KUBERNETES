@@ -10,9 +10,6 @@ spec:
 
 
 
-# CrashLoopBackOff
-# Your container image was pulled and container started, but the process inside the container keeps crashing/exiting.
-# pull image,create container,start container after starting container to kep it alive we need main process to run continously   
 
 # kubectl get pods -n roboshop
 # kubectl describe pod <pod-name> -n roboshop
@@ -21,6 +18,10 @@ spec:
 
 # ImagePullBackOff
 # Kubernetes cannot download the container image.incorrect image:tag name,Private image needs image pull secret
-
 # ImagePullBackOff = container never started because image cannot be pulled
+
+# CrashLoopBackOff
+# Your container image was pulled and container started, but the process inside the container keeps crashing/exiting.
+# pull image,create container,start container after starting container to kep it alive we need main process to run continously   
 # CrashLoopBackOff = container started, then crashed repeatedly
+# Common reasons are wrong command, missing env vars, bad config, dependency connection failure, permission issue, OOMKilled, or failing liveness probe.
