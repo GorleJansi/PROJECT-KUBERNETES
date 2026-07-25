@@ -22,3 +22,6 @@ spec:
 
 # Labels      = used to search/select/group resources
 # Annotations = used to store extra metadata/information
+
+# kubectl get pod annotation-test -n roboshop     --> To search by name of pod
+# kubectl get pods -l project=learning -n roboshop  ---> To search by label of pod
