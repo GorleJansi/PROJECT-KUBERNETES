@@ -20,7 +20,7 @@ spec:
 # selector   = which Pods this Service should send traffic to
 # port       = Service port
 # targetPort = container/pod port
-
+#Kubernetes DNS resolves backend-service to the Service's ClusterIP. The Service then distributes requests among the ready backend Pods
 
 # ClusterIP  = internal access inside cluster only
 # NodePort   = access from outside using NodeIP:NodePort

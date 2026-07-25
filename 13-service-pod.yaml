@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "cluster-ip-pod"
+  namespace: roboshop
+  labels:
+    component: frontend
+    env: dev
+  annotations:
+    author: jansi
+spec:
+  containers:
+    - name: "cluster-ip-c"
+      image: nginx   
+       
