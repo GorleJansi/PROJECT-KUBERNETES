@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: "test-daemonset"
+  namespace: roboshop
+  labels:
+    project: roboshop
+spec:
+  selector:
+    matchLabels:
+      is: daemonset
+      author: jansi
+  template:
+    metadata:
+      labels:
+        is: "daemonset"
+        author: "jansi"
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+
+      containers:
+        - name: fluentd-elasticsearch
+          image: quay.io/fluentd_elasticsearch/fluentd:v5.0.1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 150Mi
+            limits:
+              cpu: 120m
+              memory: 170Mi
+          volumeMounts:
+            - name: volume1
+              mountPath: /var/log
+              readOnly: true
+      volumes:
+        - name: volume1
+          hostPath:
+            path: /var/log
+            type: Directory
+
+
+
+
+
+# these tolerations are to have the daemonset runnable on control plane nodes
+# remove them if your control plane nodes should not run pods

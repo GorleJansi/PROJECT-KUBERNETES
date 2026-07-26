@@ -29,3 +29,6 @@ spec:
   - name: volume1
     emptyDir:
       sizeLimit: 100Mi
+
+
+# emptyDir is a temporary Pod-level volume. It is created when the Pod is scheduled to a node and exists as long as the Pod exists. Containers in the same Pod can share it. Data survives container restarts, but is deleted when the Pod is deleted or recreated.
