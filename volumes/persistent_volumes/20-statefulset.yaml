@@ -2,6 +2,7 @@ apiVersion: v1      #headless service
 kind: Service
 metadata:
   name: "statefulset-headless-service"
+  namespace: roboshop
 spec:
   clusterIP: None
   selector:
@@ -16,7 +17,8 @@ spec:
 apiVersion: v1    #cluster-ip service
 kind: Service
 metadata:
-  name: "Statefulset-clusterip-service"
+  name: "statefulset-clusterip-service"
+  namespace: roboshop
 spec:
   selector:
     author: jansi
@@ -28,18 +30,20 @@ spec:
 
 ---
 
-apiVersion: v1
-kind: Statefulset
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   name: "statefulset-test"
+  namespace: roboshop
   labels:
     project: "roboshop-statefulset-test"
 spec:
   replicas: 3
   serviceName: statefulset-headless-service       # mention headless service 
   selector:
-    author: jansi
-    project: "roboshop-statefulset-test"  
+    matchLabels:
+      author: jansi
+      project: "roboshop-statefulset-test"
   template:
     metadata:
       labels:
@@ -52,18 +56,18 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - name: stateful volume
+            - name: stateful-volume
               mountPath: /usr/share/nginx/html
-      volumeClaimTemplates:         #pvc
-        - metadata: 
-            name: stateful volume
-          spec:
-            accessModes: 
-              - ReadWriteOnce
-            storageClassName: "ebs-storageclass"
-            resources:
-              requests:
-              storage: 1Gi
+  volumeClaimTemplates:         #pvc
+    - metadata: 
+        name: stateful-volume
+      spec:
+        accessModes: 
+          - ReadWriteOnce
+        storageClassName: "ebs-storageclass"
+        resources:
+          requests:
+            storage: 1Gi
 
       # volumes:
       #   - name: stateful volume
