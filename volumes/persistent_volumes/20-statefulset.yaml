@@ -1,12 +1,12 @@
 apiVersion: v1      #headless service
 kind: Service
 metadata:
-  name: "Statefulset-headless-service"
+  name: "statefulset-headless-service"
 spec:
   clusterIP: None
   selector:
     author: jansi
-    project: "roboshop-Statefulset-test" 
+    project: "roboshop-statefulset-test" 
   ports:
     - protocol: TCP
       port: 80
@@ -20,7 +20,7 @@ metadata:
 spec:
   selector:
     author: jansi
-    project: "roboshop-Statefulset-test" 
+    project: "roboshop-statefulset-test" 
   ports:
     - protocol: TCP
       port: 80
@@ -31,23 +31,23 @@ spec:
 apiVersion: v1
 kind: Statefulset
 metadata:
-  name: "Statefulset-test"
+  name: "statefulset-test"
   labels:
-    project: "roboshop-Statefulset-test"
+    project: "roboshop-statefulset-test"
 spec:
   replicas: 3
-  serviceName: Statefulset-headless-service       # mention headless service 
+  serviceName: statefulset-headless-service       # mention headless service 
   selector:
     author: jansi
-    project: "roboshop-Statefulset-test"  
+    project: "roboshop-statefulset-test"  
   template:
     metadata:
       labels:
         author: jansi
-        project: "roboshop-Statefulset-test"
+        project: "roboshop-statefulset-test"
     spec:
       containers:
-        - name: "roboshop-Statefulset-container"
+        - name: "roboshop-statefulset-container"
           image: nginx
           ports:
             - containerPort: 80
