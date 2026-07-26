@@ -19,6 +19,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "ebs-dynamic-pod"
+  namespace: roboshop
   labels:
     project: "ebs-dynamic"
     author: jansi
@@ -42,6 +43,7 @@ kind: Service
 metadata:
   name: "ebs-dynamic-lb"
 spec:
+  type: LoadBalancer
   selector:
     project: "ebs-dynamic"
     author: jansi
@@ -49,4 +51,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodeport: 30008                       
+      nodePort: 30008                       
