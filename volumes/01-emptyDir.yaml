@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "volume-test"
+  namespace: roboshop
+  labels:
+    project: roboshop
+  annotations:
+    author: jansi
+    gmail: gorlejansi@gmail.com
+spec:
+  containers:
+
+    - name: "volume-test-c1"
+      image: nginx:
+      volumeMounts:
+      - name: volume1
+        mountPath: /var/logs/nginx/
+
+    - name: "volume-test-c2"
+      image: alamlinux
+      command: ["sleep", "10000"]
+      volumeMounts:
+      - name: volume1
+        mountPath: /mnt/nginx-logs
+        readOnly: true
+        
+  volumes:
+  - name: volume1
+    emptyDir:
+      sizeLimit: 100Mi
