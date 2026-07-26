@@ -30,7 +30,7 @@ spec:
             - key: topology.kubernetes.io/zone
               operator: In
               values:
-                - us-east-1a
+                - us-east-1b
 
 # EBS volume belongs to one Availability Zone.
 # The Pod must run on a node in the same AZ as the EBS volume.
