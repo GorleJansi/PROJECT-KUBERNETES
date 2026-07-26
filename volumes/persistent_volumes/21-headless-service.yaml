@@ -22,6 +22,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "headless-pod-1"
+  namespace: roboshop
   labels:
     author: jansi
     project: "headless-service-roboshop"
@@ -30,7 +31,8 @@ spec:
     - name: "headless-pod-c"
       image: nginx
       ports:
-        - containerPorts: 80
+        - containerPort: 80
+
 
 ---
 
@@ -38,6 +40,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "headless-pod-2"
+  namespace: roboshop
   labels:
     author: jansi
     project: "headless-service-roboshop"
@@ -46,6 +49,7 @@ spec:
     - name: "headless-pod-c"
       image: nginx
       ports:
-        - containerPorts: 80
+        - containerPort: 80      
+
         
 
