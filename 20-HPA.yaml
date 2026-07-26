@@ -1,0 +1,23 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: deployment-test-hpa
+  namespace: roboshop
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: deployment-test
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+
+# HPA watches Deployment CPU usage and changes replica count automatically.
+# averageUtilization: 50 means scale when average CPU usage goes above 50% of requested CPU.
+# metrics-server must be installed for CPU/memory HPA metrics.
