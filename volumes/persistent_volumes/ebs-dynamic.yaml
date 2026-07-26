@@ -1,0 +1,52 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "ebs-dynamic-pvc"
+  namespace: roboshop
+  labels:
+    project: "roboshop-ebs-dynamic"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-storageclass
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "ebs-dynamic-pod"
+  labels:
+    project: "ebs-dynamic"
+    author: jansi
+spec:
+  containers:
+    - name: "ebs-dynamic-container"  
+      image: nginx
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: volume1
+          mountPath: /usr/share/nginx/html
+  volumes:
+    - name: volume1
+      persistentVolumeClaim:
+        claimName:  ebs-dynamic-pvc    
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "ebs-dynamic-lb"
+spec:
+  selector:
+    project: "ebs-dynamic"
+    author: jansi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodeport: 30008                       

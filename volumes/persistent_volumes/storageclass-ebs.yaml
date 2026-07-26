@@ -1,0 +1,7 @@
+apiVersion: storage.k8s.io/v1        # API group and version for StorageClass objects.
+kind: StorageClass                   # Creates a StorageClass, which defines how dynamic volumes are provisioned.
+metadata:                            # Metadata for this StorageClass object.
+  name: "ebs-storageclass"           # Name PVCs use in storageClassName to request this storage type.
+reclaimPolicy: Retain                # Keeps the EBS volume after the PVC is deleted; data is not deleted automatically.
+provisioner: ebs.csi.aws.com         # Uses the AWS EBS CSI driver to create EBS volumes dynamically.
+volumeBindingMode: WaitForFirstConsumer # Creates/binds the EBS volume only after a Pod uses the PVC, so the volume is created in the correct node AZ.
