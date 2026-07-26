@@ -27,7 +27,7 @@ spec:
           image: nginx
           ports:
             - containerPort: 80
-          resources:
+          resources:              # important to check metrics and scale
             requests:
               cpu: "100m"
               memory: "128Mi"
@@ -60,10 +60,11 @@ metadata:
   name: "hpa-roboshop"
   namespace: roboshop
 spec:
-  scaleTargetRef:
+  scaleTargetRef:             #important to ref the deployment to autoscale pods
     apiVersion: apps/v1
     kind: Deployment
     name: "hpa-test"
+
   minReplicas: 2
   maxReplicas: 10
   metrics: 
