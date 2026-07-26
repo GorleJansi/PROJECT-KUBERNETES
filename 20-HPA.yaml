@@ -1,23 +1,61 @@
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+
+apiVersion: v1
+kind: Deployment
 metadata:
-  name: deployment-test-hpa
+  name: "hpa-test"
+  namespace: roboshop
+  labels:
+    project: "roboshop-deployment"
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      project: "hpa-Roboshop"
+      env: dev
+  template:
+    metadata:
+      name: "hpa-pod"
+      namespace: roboshop
+      labels:
+        project: "hpa-Roboshop"
+        env: dev
+      annotations:
+        author: "jansi"
+        gmail: "gorlejansi2001@gmail.com"
+    spec:
+      containers:
+        - name: "hpa-container"  
+          image: nginx
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "lb-hpa"
   namespace: roboshop
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: deployment-test
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
+  type: LoadBalancer
+  selector:
+     lb: "lb-hpa-match-label"
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80 
+      nodeport: 300020             
 
-# HPA watches Deployment CPU usage and changes replica count automatically.
-# averageUtilization: 50 means scale when average CPU usage goes above 50% of requested CPU.
-# metrics-server must be installed for CPU/memory HPA metrics.
+
+
+
+
+
+
+
+
+
+

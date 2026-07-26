@@ -58,7 +58,7 @@ spec:
           volumeMounts:
             - name: stateful-volume
               mountPath: /usr/share/nginx/html
-  volumeClaimTemplates:         #pvc
+  volumeClaimTemplates:       # Create a separate PVC for every StatefulSet Pod.
     - metadata: 
         name: stateful-volume
       spec:
@@ -83,3 +83,9 @@ spec:
 
 
 # stateful set should have pvc,clusterip-service,headless service
+# kubectl get svc -n roboshop
+# kubectl get statefulset -n roboshop
+# kubectl get pods -n roboshop -l project=roboshop-statefulset-test -o wide
+# kubectl get pv -n roboshop -o wide
+# kubectl get pvc -n roboshop -o wide
+# kubectl scale statefulset <name> --replicas = 5
