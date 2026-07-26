@@ -81,7 +81,7 @@ metadata:
   name: "ebs-elastic-lb"
   namespace: roboshop
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     project: "roboshop-ebs-static"
     author: jansi
