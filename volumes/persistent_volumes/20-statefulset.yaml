@@ -1,0 +1,81 @@
+apiVersion: v1      #headless service
+kind: Service
+metadata:
+  name: "Statefulset-headless-service"
+spec:
+  clusterIP: None
+  selector:
+    author: jansi
+    project: "roboshop-Statefulset-test" 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: v1    #cluster-ip service
+kind: Service
+metadata:
+  name: "Statefulset-clusterip-service"
+spec:
+  selector:
+    author: jansi
+    project: "roboshop-Statefulset-test" 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Statefulset
+metadata:
+  name: "Statefulset-test"
+  labels:
+    project: "roboshop-Statefulset-test"
+spec:
+  replicas: 3
+  serviceName: Statefulset-headless-service       # mention headless service 
+  selector:
+    author: jansi
+    project: "roboshop-Statefulset-test"  
+  template:
+    metadata:
+      labels:
+        author: jansi
+        project: "roboshop-Statefulset-test"
+    spec:
+      containers:
+        - name: "roboshop-Statefulset-container"
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: stateful volume
+              mountPath: /usr/share/nginx/html
+      volumeClaimTemplates:         #pvc
+        - metadata: 
+            name: stateful volume
+          spec:
+            accessMount: 
+              - ReadWriteOnce
+            storageClassName: "ebs-storageclass"
+            resources:
+              requests:
+              storage: 1Gi
+
+      # volumes:
+      #   - name: stateful volume
+      #     persistentVolumeClaim:
+      #       claimName: <name>         
+
+
+
+
+
+
+
+
+
+# stateful set should have pvc,clusterip-service,headless service
