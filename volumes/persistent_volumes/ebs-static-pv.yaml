@@ -1,0 +1,93 @@
+# 1.create driver - ebs volume in aws manually
+# 2.add iam roles for node to access ebs to mount it in pod
+# 3.install ebs-csi-drivers in workstation (drivers will make commands understand by aws plugin to create volumes)
+# 4.create pv - refer to ebs volume
+# 5.create pvc - refer to pv to bind
+# 6.pod refer to pvc
+
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: "pv-static"
+  labels:
+    project: "roboshop-ebs-static"
+spec:
+  capacity:
+    storage: 10Gi            #How much storage this PV provides.
+  volumeMode: Filesystem     #How the volume is exposed.
+  accessModes: 
+    - ReadWriteOnce  #mounted read-write by one node
+  persistentVolumeReclaimPolicy: Retain     #What happens to PV when PVC is deleted. retain-data,storage not deleted
+  storageClassName: ""
+  csi:
+    driver: ebs.csi.aws.com
+    volumeHandle: vol-004f3e1a0213da396
+    fsType: ext4 
+ 
+
+# EBS volume belongs to one Availability Zone.
+# The Pod must run on a node in the same AZ as the EBS volume.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "pvc-static"
+  namespace: roboshop
+  labels:
+    project: "roboshop-ebs-static"
+spec:
+  accessModes: 
+    - ReadWriteOnce   #only one node can mount the volume and read ,write
+  storageClassName: ""      # storage classes are for dynamic creating of storage
+  volumeName: pv-static
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "ebs-static-pod"
+  namespace: roboshop
+  labels: 
+    project: "roboshop-ebs-static"
+    author: jansi
+spec:
+  containers:
+    - name:  "ebs-static-container"
+      image: nginx
+      ports:
+        - containerPort: 80
+      nodeAffinity:
+        required:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: topology.kubernetes.io/zone
+                  operator: In
+                  values:
+                    - us-east-1a   
+      volumeMounts:
+        - name: volume1
+          mountPath: /usr/share/nginx/html
+
+  volumes:
+    - name: volume1
+      persistentVolumeClaim:
+        claimName: pvc-static
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "ebs-elastic-lb"
+  namespace: roboshop
+spec:
+  type: NodePort
+  selector:
+    project: "roboshop-ebs-static"
+    author: jansi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30007   
