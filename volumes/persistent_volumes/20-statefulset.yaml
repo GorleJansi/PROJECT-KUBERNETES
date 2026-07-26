@@ -58,7 +58,7 @@ spec:
         - metadata: 
             name: stateful volume
           spec:
-            accessMount: 
+            accessModes: 
               - ReadWriteOnce
             storageClassName: "ebs-storageclass"
             resources:
