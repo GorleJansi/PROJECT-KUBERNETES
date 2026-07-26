@@ -12,7 +12,7 @@ spec:
   containers:
 
     - name: "volume-test-c1"
-      image: nginx:
+      image: nginx
       volumeMounts:
       - name: volume1
         mountPath: /var/logs/nginx/
@@ -24,7 +24,7 @@ spec:
       - name: volume1
         mountPath: /mnt/nginx-logs
         readOnly: true
-        
+
   volumes:
   - name: volume1
     emptyDir:
