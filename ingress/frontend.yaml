@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "frontend-deployment"
+  namespace: prod
+spec:
+  replicas: 2
+  selector: 
+    matchLables:
+      project: micro
+      env: prod
+      component: frontend
+  template:
+    metadata:
+      labels:
+        project: micro
+        env: prod
+        component: frontend      
+      spec:
+        containers:
+          - name: "frontend-container"
+            image:  nginx:1.27
+            readinessProbe:
+              httpGet:
+                path: /
+                port: 80
+                intitialDelaySeconds: 10
+                periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "frontend-service"
+  namespace: prod
+spec:
+  type: ClusterIP
+  selector:
+    project: micro
+    env: prod
+    component: frontend      
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+

@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: "backend-deployment"
+  namespace: prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: micro
+      env: prod
+      component: backend 
+  template:    
+    metadata:
+      labels:
+        project: micro
+        env: prod
+        component: backend 
+    spec:
+      containers:
+        - name: "backend-container"
+          image: hashicorp/http-echo:1.0
+          args:
+            - "-text=Response from backend"
+            - "-listen=:8080"
+          ports:
+            - containerPort:8080     
+          readinessprobe:
+            httpsGet:
+              path: / 
+              port: 8080
+            intitialDelaySeconds: 10
+            PeriodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "backend-service"
+  namespace: prod
+spec:
+  type: ClusterIP
+  selector: 
+    project: micro
+    env: prod
+    component: backend 
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+
+
