@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: k8suser-role-bind
+  namespace: roboshop
+subjects:
+  - kind: user
+    name: k8s-jansi
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  - kind:  Role
+    name:  k8suser-role
+    apiGroup: rbac.authorization.k8s.io
+
