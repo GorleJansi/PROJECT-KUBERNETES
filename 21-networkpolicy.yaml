@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind:   NetworkPolicy
+metadata:
+  name: "like-sg"
+  namespace: roboshop
+  labels:
+    project: roboshop
+    env: dev
+  annotations:
+    purpose: "perform like sg to allow traffic to ,go out"
+spec:
+#sg for which pods.?
+  podSelector:
+    matchLabels:
+      project: roboshop
+      component: mongodb
+  policytypes:
+    - Ingress
+#inbound traffic to mongodb pod 
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            project: roboshop
+            component: catalogue
+      - podSelector:
+          matchLabels:
+            project: roboshop
+            component: user
+      ports:
+        - protocol: TCP
+          port: 27017      
+#mongodb pods accepting traffic on port 27017 from catalogue,user pods 
+
+# kubectl get networkpolicy -n roboshop
+

@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "headless-svc"
+  namespace: roboshop
+spec:
+  clusterIP: None
+  selector:
+    project: roboshop
+    env: dev
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "clusterip-svc"
+  namespace: roboshop
+spec:
+  selector:
+    project: roboshop
+    env: dev
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "mysql"
+  namespace: roboshop
+spec:
+  replicas: 3
+  serviceName: "headless-svc"
+  selector:
+    matchLabels:
+      project: roboshop
+      env: dev
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        env: dev
+    spec:
+      containers:
+        - name: "mysql"
+          image: mysql
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: stateful-volume
+              mountPath: /var/lib/mysql         # this dir is stored in pvc even if pod deleted ,recreted attcahed to same pvc (mysql-0 pod ,mysql-pvc-mysql-0 pvc )
+    
+    volumeClaimTemplates:                   #creates 1 pvc per pod 
+      - metadata: 
+          name: mysql-pvc                  #mysql-pvc-mysql-0,mysql-pvc-mysql-1 ..
+        spec:
+          accessModes: [ReadWriteOnce]      #This volume can be attached as read/write to only one Kubernetes node at a time.
+          storageClassName: gp3
+          resources:
+            requests:
+              storage: 10Gi
+                  
+                   
+ # statefulset is used for stateful applicatiosn where the state need to be manitained because the store user info
+ # ordered creation,deletion of replicas
+ # name of replicas are ordered <statefulset-name>-<numbers>
+ #each  replica get its own pvc storage
+ # need headless service which dont have clusterip so it can be used for peer discovery in stateful apps ; normal service when nslookup gives clusterip of its own;headless service will give list of pods attched to service
+ # clusterip service for networking btw internal cluster, lb btw stateful apps            
