@@ -1,0 +1,52 @@
+#daemonset creates a pod in each worknode in cluster
+# if new pod is added automaticaly add pod
+# if a node deleted pod also deleted
+# mostly used to collect node metrics and used as node level agent 
+# collect node logs and send to log collection agent likefluentbit
+# promethus node exporter - monitor node
+#scaling of deamonset replicas happens when node is removed or added
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: "test-daemon"
+  namespace: roboshop
+spec:
+  selector:
+    matchLabels:
+      project: roboshop
+      env: dev
+  template:
+      metadata:
+        labels:
+          project: roboshop
+          env: dev
+      spec:
+        containers:
+          - name: "test-daemon-c"
+            image: nginx
+            ports:
+              - containerPort: 80
+            resources:
+              requests:
+                cpu: "100m"
+                memory: "150Mi"
+              limits:
+                cpu: "150m"
+                memory: "200Mi"
+            readinessProbe:
+              httpGet:
+                path: /
+                port: 80
+              initialDelaySeconds: 10
+              periodSeconds: 5
+            livenessProbe:
+              httpGet:
+                path: /
+                port: 80
+              initialDelaySeconds: 10
+              periodSeconds: 5
+
+
+# kubectl get pods -n roboshop -o wide
+# kubectl get daemonset <name> -n roboshop

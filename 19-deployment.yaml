@@ -46,6 +46,6 @@ spec:
       targetPort: 80
 
       
-    lb--->nodes --> service ---->pod-1 pod-3
-          k-proxy      port         pod-2
-        networkrules   clusterip
+# lb--->nodes --> service ---->pod-1 pod-3
+#       k-proxy      port         pod-2
+#     networkrules   clusterip
