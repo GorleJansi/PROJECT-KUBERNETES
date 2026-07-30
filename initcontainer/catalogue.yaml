@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: deployment
+metadata:
+  name: catalogue-deploy
+  namespace: roboshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: roboshop  
+      component: catalogue
+  template:
+    metadata:
+      labels:
+        app: roboshop  
+        component: catalogue
+    spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: busybox:1.36
+          command:
+            - sh
+            - c
+            - |
+              echo "waiting for mongodb...."
+              until nc -zv mongodb:27017
+              do
+                echo "MongoDB is not ready. Retrying..."
+                sleep 5
+              done
+              echo "MongoDB is reachable."  
+      containers:
+        - name: "catalogue-caontainer"
+          image: jansigorle03/catalogue
+          ports:
+            - containerPorts:   8080
+
