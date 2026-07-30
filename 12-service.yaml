@@ -7,14 +7,15 @@ metadata:
     author: jansi
     course: devops
 spec:
-  type: ClusterIP
-  selector:
+  type: ClusterIP                              #imp
+  selector:                                    #imp
     component: frontend
     env: dev
-  ports:
+  ports:                                        #imp
     - protocol: TCP
       port: 80          #service port
       targetPort: 80    #container port
+
 
 # That Service sends traffic to Pods with labels same as service selector
 # selector   = which Pods this Service should send traffic to
@@ -30,3 +31,4 @@ spec:
 # kubectl get endpoints <service-name> -n roboshop ----> check endpoints connected to the service
 # kubectl get pod <pod-name> -n <namespace>
 # kubectl get service <service-name> -n <namespace>
+# kubectl describe service <name> -n namespace

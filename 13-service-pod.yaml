@@ -15,3 +15,4 @@ spec:
 
 
 
+# when creating pod the if readiness probe are sucess then kublet will check the labels of pod and assign the pod to specific service if same  selector labels

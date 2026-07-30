@@ -23,4 +23,22 @@ spec:
           ports:
             - containerPort: 80    
 
-# 
+# relicaset will only manitained desired replicas
+# it will not respect any changes in config or app code 
+# by default deployment will create replicaset + rolling update if any change in config/image
+
+
+
+#  spec:
+#   replicas:2
+#   selector:
+#     matchLabels:
+#   template:
+#     metadata:
+#       labels:
+#     spec:    
+#       containers:
+#         - name:
+#           image:
+#           ports:
+#             - containerPort:

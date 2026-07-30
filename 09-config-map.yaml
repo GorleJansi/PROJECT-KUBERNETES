@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: "configmap-test"
   namespace: roboshop
-data:
+data:                       # imp
   APP_ENV: "dev"
   APP_PORT: "8080"
 
@@ -26,7 +26,7 @@ spec:
       image: nginx
       ports:
         - containerPort: 80
-      envFrom:
+      envFrom:                            # imp
         - configMapRef:
             name: configmap-test
 
@@ -35,3 +35,11 @@ spec:
 # kubectl get configmap -n <namespace>    -->all config maps
 # kubectl describe configmap <name> -n <namespace>    ---> describe specific config map
 # kubectl get configmap <name> -n <namespace> -o yaml --> specific config maps
+
+# env:
+#   - name: x
+#     value: 1
+
+# envFrom:
+#   - configMapRef:
+#       name: <name>

@@ -12,13 +12,22 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-          
+      # nodePort: 30010   (if not given lb will select random number from 30000-32767)
 
 # Service selector labels must be a subset of Pod labels.
 # All selector key-value pairs must match.
 # Pod can have extra labels.
 
+
+# LoadBalancer service -- creates lb,nodeport,clusterip
+
 # user--> lb--->check selector label matching any pod labels in any nodes of the cluster if match in label then foward traffic there
-# level-1: AWS LB targets only healthy nodes
+# level-1: AWS LB targets only healthy nodes in cluster and nodeport is opened on all nodes
 # level-2: After traffic reaches the node, Kubernetes checks the Service selector.
 #          mysql-pod and redis-pod are running on the same node, they will not receive this traffic.omly frontend-pod will recive if match labels
+
+
+user-->lb--->node-->service-->pod
+    -->lb--->node-->service-->pod
+
+    for every componenet different lb need to be created

@@ -20,8 +20,10 @@ spec:
 
 
 
-# Labels      = used to search/select/group resources
+# Labels      = used to search/select/group resources (identifying and selecting objects)
 # Annotations = used to store extra metadata/information
+# Annotations are not special configuration fields by default. They are additional non-identifying metadata.
+# controllers decide which annotation keys have meaning.
 
 # kubectl get pod annotation-test -n roboshop     --> To search by name of pod
 # kubectl get pods -l project=learning -n roboshop  ---> To search by label of pod
