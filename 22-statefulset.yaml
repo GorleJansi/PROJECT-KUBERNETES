@@ -57,15 +57,15 @@ spec:
             - name: stateful-volume
               mountPath: /var/lib/mysql         # this dir is stored in pvc even if pod deleted ,recreted attcahed to same pvc (mysql-0 pod ,mysql-pvc-mysql-0 pvc )
     
-    volumeClaimTemplates:                   #creates 1 pvc per pod 
-      - metadata: 
-          name: mysql-pvc                  #mysql-pvc-mysql-0,mysql-pvc-mysql-1 ..
-        spec:
-          accessModes: [ReadWriteOnce]      #This volume can be attached as read/write to only one Kubernetes node at a time.
-          storageClassName: gp3
-          resources:
-            requests:
-              storage: 10Gi
+      volumeClaimTemplates:                   #creates 1 pvc per pod 
+        - metadata: 
+            name: mysql-pvc                  #mysql-pvc-mysql-0,mysql-pvc-mysql-1 ..
+          spec:
+            accessModes: [ReadWriteOnce]      #This volume can be attached as read/write to only one Kubernetes node at a time.
+            storageClassName: gp3
+            resources:
+              requests:
+                storage: 10Gi
                   
                    
  # statefulset is used for stateful applicatiosn where the state need to be manitained because the store user info
