@@ -33,5 +33,5 @@ spec:
         - name: "catalogue-caontainer"
           image: jansigorle03/catalogue
           ports:
-            - containerPorts:   8080
+            - containerPort:   8080
 
