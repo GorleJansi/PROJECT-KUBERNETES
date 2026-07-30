@@ -22,6 +22,8 @@ spec:
           project: roboshop
           env: dev
       spec:
+        # nodeSelector:                       # only on specific nodes the pods will be created based on labels of nodes
+        #   daemon: monitoring                # use if pods should run on few ,instead of all
         containers:
           - name: "test-daemon-c"
             image: nginx
