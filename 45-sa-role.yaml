@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-pods
+  namespace: roboshop
+rules:
+  apiGroups: ""
+  verbs: [get,list,watch]
+  resources: [pods]  
