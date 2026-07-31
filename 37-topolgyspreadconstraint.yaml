@@ -1,0 +1,48 @@
+# this tell scheduler to distribute pods of the deployment across nodes,zones,regions or another topology equally
+# used to improve high availabilty if there is failure in one az,region,node it avaoid replacing many replicas
+
+# 6 replicas of frontend 
+# with preferred pod anti-affinity also it will distribute each replica to each node and remianing can be anywhere in all nodes
+
+# Node 1 → frontend-1, frontend-5, frontend-6, frontend-4
+# Node 2 → frontend-2
+# Node 3 → frontend-3
+# Distribution: 4 - 1 - 1
+# If Node 1 fails, four replicas are lost.
+
+# With topology spread constraints:
+# Node 1 → frontend-1, frontend-2
+# Node 2 → frontend-3, frontend-4
+# Node 3 → frontend-5, frontend-6
+# Distribution: 2 - 2 - 2
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "toplogyspreadconstarint-d"
+  namespace: roboshop
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      project: frontend
+  template:
+    metadata:
+      labels:
+        project: frontend
+    spec:
+      topologySpreadConstraint:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+                    project: frontend
+            containers:
+              - name: "tsc-p"
+                image: nginx
+
+
+# tsc is used to qually distribute pods across diff nodes,zones,or other topology ,labelselector will decide which pods to count(pods with same lables are counted to make equal distributuion)
+# topologykey decides topology domain,maxscew decides how uneven the distributuion is allowed(highest pod count- lowest podcount=maxscew)
