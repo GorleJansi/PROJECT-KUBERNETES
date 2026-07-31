@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: StorageClass
+metadata:
+  name: "test-sc"
+
+provisioner: ebs.csi.aws.com
+
+parameters:
+  type: gp3
+  encrypted: "true"
+  csi.storage.k8s.io/fstype: ext4
+
+reclaimPolicy: Retain             #When the PVC is deleted pv will release binding, Kubernetes will not delete the real storage volume.
+
+volumeBindingMode: WaitForFirstConsumer             #EBS volumes are tied to one Availability Zone.so create pod first then created volume in same az and attach
+
+allowVolumeExpansion: true          #Allows you to increase PVC size later.
+
+
+
+
+
+
+# StorageClass:
+# “Create encrypted gp3 disks”
+
+# PVC:
+# “I need 10 GiB from the gp3 class”
+
+# EBS CSI driver:
+# “I will create a 10 GiB EBS volume”
+
+# PV:
+# “I represent the newly created EBS volume”
+
+# Pod:
+# “Mount that volume at /var/lib/mysql”  
+
+
+# With a StorageClass:
+
+# Developer creates PVC
+#              ↓
+# StorageClass identifies storage requirements
+#              ↓
+# CSI driver creates EBS volume automatically
+#              ↓
+# Kubernetes creates PV automatically
+#              ↓
+# PVC binds to PV
+#              ↓
+# Pod mounts volume
+
+# This is called dynamic provisioning.

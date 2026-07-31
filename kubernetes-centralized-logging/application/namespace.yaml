@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: logging
+  name: logging-demo
   labels:
+    app.kubernetes.io/name: logging-demo
+    app.kubernetes.io/part-of: kubernetes-centralized-logging
     project: central-logging
     env: dev
-    
-  

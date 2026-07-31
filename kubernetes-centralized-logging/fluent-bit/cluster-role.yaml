@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluent-bit-read
+  labels:
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/part-of: kubernetes-centralized-logging
+    project: central-logging
+rules:
+  - apiGroups:                #core resources
+      - ""
+    resources:          # which resources in coreapi group
+      - namespaces
+      - pods
+    verbs:              #what action can be performed on resources ; given are read acess to resources
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/proxy
+    verbs:
+      - get
+      - list
+      - watch
+
+

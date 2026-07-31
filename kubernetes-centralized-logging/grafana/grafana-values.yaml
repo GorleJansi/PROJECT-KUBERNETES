@@ -1,0 +1,56 @@
+adminUser: admin
+adminPassword: admin123
+
+service:
+  type: LoadBalancer
+  port: 80
+
+persistence:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        uid: loki
+        type: loki
+        access: proxy
+        url: http://loki-gateway.logging.svc.cluster.local
+        isDefault: true
+        editable: true
+        jsonData:
+          timeout: 60
+          maxLines: 1000
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: logging
+        orgId: 1
+        folder: Kubernetes Logging
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/logging
+
+dashboardsConfigMaps:
+  logging: grafana-logging-dashboard
+
+grafana.ini:
+  auth.anonymous:
+    enabled: false
+  analytics:
+    check_for_updates: false
+  log:
+    mode: console

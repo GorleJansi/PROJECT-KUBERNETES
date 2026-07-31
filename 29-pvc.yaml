@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistenVolumeClaim
+metadata:
+  name: "test-pvc"
+  namespace: roboshop
+spec:
+  accessModes: [ReadWriteOnce]      #The volume can be mounted as read/write by one Kubernetes node at a time.
+  storageClassName: "test-sc"
+  resources:
+    requests:
+      storage: 10Gi
+
+# Give me:
+# 10 GiB storage
+# from StorageClass test-sc
+# with ReadWriteOnce access      
