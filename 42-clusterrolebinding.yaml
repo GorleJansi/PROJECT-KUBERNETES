@@ -1,0 +1,34 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jansi-node-reader
+
+subjects:
+  - kind: Group
+    name: node-reader
+    apiGroups: rbac.authorization.k8s.io
+
+roleRef:
+  kind: ClusterRole
+  name: node-reader
+  apiGroups: rbac.authorization.k8s.io
+
+
+
+# 1. kubectl sends request to API server
+#                    ↓
+# 2. Authentication identifies the user ;; aws-auth/accesspoint
+#                    ↓
+# 3. User identity = jansi
+#                    ↓
+# 4. RBAC authorization checks bindings
+#                    ↓
+# 5. Is jansi connected to a Role or ClusterRole?
+#                    ↓
+# 6. Does that permission allow:
+#       resource = pods
+#       verb = list
+#       namespace = roboshop?
+#                    ↓
+# 7. Yes → API returns Pods
+#    No  → API returns 403 Forbidden

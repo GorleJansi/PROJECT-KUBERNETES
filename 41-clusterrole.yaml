@@ -1,0 +1,26 @@
+# clusterrole defines permissions at cluster level when binded to clusterrolebinding
+# used for:  Cluster-scoped resources ,namespaced Resources across multiple namespaces
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: "node-reader"
+  
+rules:
+  apiGroups:  ""
+  resources: 
+    - nodes
+  verbs:
+    - get
+    - list
+    - watch
+
+    
+
+
+# ClusterRole(no namespace defined) + RoleBinding (namespace defined)
+# → Read Pods in one namespace
+
+# ClusterRole + ClusterRoleBinding (no namesapces defined)
+# → Read Pods across all namespaces
