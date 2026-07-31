@@ -34,7 +34,7 @@ spec:
           mountPaths: /data  
           
   volumes:
-    - name: empty-dir
+    - name: shared-volume
       emptyDir: {}            
 
 
