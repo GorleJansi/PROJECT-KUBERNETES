@@ -1,20 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "cart-ds"
+  name: "payment-ds"
+  namespace: logging
   labels:
-    component: cart
+    component: payment
     project: central-logging
 spec:
   replicas: 2
   selector:
     matchLabels:
-      component: cart
+      component: payment
       project: central-logging    
   template:
     metadata:
+      labels:
+        component: payment
+        project: central-logging 
+    spec:      
       containers:
-        - name: "cart-c"
+        - name: "payment-c"
           image: busybox:1.36
           command:
             - sh
@@ -23,9 +28,9 @@ spec:
               count=1
               while true; do
                 if [ $((count % 10)) -eq 0 ]; then
-                  echo "{\"service\":\"cart\",\"level\":\"ERROR\",\"message\":\"database connection failed\",\"request_id\":\"req-$count\"}"
+                  echo "{\"service\":\"payment\",\"level\":\"ERROR\",\"message\":\"database connection failed\",\"request_id\":\"req-$count\"}"
                 else
-                  echo "{\"service\":\"cart\",\"level\":\"INFO\",\"message\":\"cart request completed\",\"request_id\":\"req-$count\"}"
+                  echo "{\"service\":\"payment\",\"level\":\"INFO\",\"message\":\"payment request completed\",\"request_id\":\"req-$count\"}"
                 fi
                 count=$((count + 1))
                 sleep 5
