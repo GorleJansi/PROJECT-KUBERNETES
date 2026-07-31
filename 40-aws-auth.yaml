@@ -1,0 +1,51 @@
+
+# IAM user (create in aws),attach DescribeClusterpolicy
+#         │
+#         │ AWS credentials access,secretkey
+#         ▼
+# kubectl workstation (kubectl,eksctl,aws configure -usercreated)
+#         │1.aws eks update-kubeconfig --region <r> --name <clustername>
+#         │  gets api server endpoints,cert,clustercontext
+#         │ 2. kubectl get pods -n <ns>
+#         ▼
+# Amazon EKS control plane
+#         │
+#      1. │ Authenticate IAM identity (whoa re you.?)
+#         ▼
+#     aws-auth ConfigMap
+#         │
+#         │ Map IAM ARN → Kubernetes user/group
+#         ▼
+#     2. Kubernetes RBAC     Authorization
+#       Role / ClusterRole
+#       RoleBinding / ClusterRoleBinding
+#         │
+#         ▼
+# Allow or deny:
+# kubectl get pods
+
+
+# kubectl get configmaps -n kube-system 
+# kubectl describe configmap aws-auth -n kube-system
+
+
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::160885265516:role/eksctl-roboshop-dev-nodegroup-robo-NodeInstanceRole-SbfgbYSSoQvc
+      groups:
+      - system:bootstrappers
+      - system:nodes
+      username: system:node:{{EC2PrivateDNSName}}
+  mapUsers: |
+    - groups:
+      - pod-reader
+      userarn: arn:aws:iam::160885265516:user/suresh
+      username: jansi
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-12-11T01:49:27Z"
+  name: aws-auth
+  namespace: kube-system
+  uid: 33956aae-bab6-40e4-af5b-8e3b202d922e

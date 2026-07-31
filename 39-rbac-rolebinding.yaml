@@ -1,0 +1,36 @@
+# rolebinding assign permission to user ; bind permission to user/group/sa
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: "jansi-pod-reader"
+  namespace: roboshop
+subjects:
+  - kind: Group               #mem of this group can use pod-reader role
+    name: pod-readers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader      
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+  # subjects->user/group/serviceaccount --> who recievec access
+  # roleref-->which role to bind these subjects --> which permission set is assigned
+
+
+# 1. Create IAM user or preferably IAM role
+# 2. Grant required AWS IAM permissions
+#    such as eks:DescribeCluster
+# 3. Map IAM principal into EKS using:
+#    - EKS Access Entry — recommended
+#    - aws-auth ConfigMap — legacy
+# 4. Map the identity to a Kubernetes group
+# 5. Create Role or ClusterRole
+# 6. Create RoleBinding or ClusterRoleBinding
+# 7. Generate local kubeconfig
+# 8. Run kubectl
+# 9. EKS authenticates the IAM identity
+# 10. Kubernetes RBAC authorizes the request

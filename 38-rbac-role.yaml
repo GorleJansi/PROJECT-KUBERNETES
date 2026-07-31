@@ -1,0 +1,38 @@
+# rbac role based access control
+# who can perform(user,group,serviceaccount) which action(get,list,watch,create,update,delete,patch) in which k8s resource(pods,deployments,nodes,services,configmap etc) in what scope (namespace level or clusterlevel)
+# role - permissions(what action can be performed on what k8s resource),one specific namespace level access
+#        what is allowed.?
+# rolebinding - bind role to user; user can perform action on specific resource
+#               who is allowed to do .?
+# users,groups - human acces to cluster resources
+# serviceaccount- nonhuman,pod access the cluster resources 
+
+# in aws eks iam performs authentication who are you .? rbac perform authorization what actions you can do .?
+
+
+apiVersion: v1
+kind: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-reader
+  namespace: roboshop                         # grant permission to perform action on resources in this namesoace\
+rules:
+  - apiGroups: ""                                 #core api group
+    verbs: [get,list,watch]                    #  Allowed actions
+    resources: [ pods,servcies,configmaps,secrets ]   # Allowed resource
+  - apiGroups: apps
+    verbs: [get,list,watch,create,delete,update]
+    resources: [deployments,statefulset]
+
+# verbs:
+# get    → Read one object
+# list   → Read multiple objects
+# watch  → Monitor changes
+# create → Create a resource
+# update → Replace/update a resource
+# patch  → Partially update a resource
+# delete → Delete a resource
+
+# apiGroups:
+# Pods, Services, ConfigMaps and Secrets belong to the core API group: ""
+# deployments,statefulset - apps api group
+# jobs,cronjobs -batch api group
