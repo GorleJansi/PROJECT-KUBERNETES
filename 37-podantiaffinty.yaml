@@ -20,10 +20,11 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                  - key: component
+                  - key: project
                     operator: In
                     values:
-                      - frontend
+                      - nginx
+                      
               topologyKey: kubernetes.io/hostname        
       containers:
         - name: "antiffinity-p"
