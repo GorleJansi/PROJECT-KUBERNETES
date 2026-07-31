@@ -3,7 +3,7 @@
 # Pod affinity  → checks labels on other Pods
 # run redis-cache pod on same node as backend pod for less latency
 
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "podaffinity-d"

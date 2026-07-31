@@ -2,7 +2,7 @@
 # NODE AFFINITY-->SOFT--> PREFER one node;if not avaibale i will run elsewhere
 # Multiple possible nodes use this
 
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata: 
   name: "affinty-deoplyment"
