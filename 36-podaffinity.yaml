@@ -38,3 +38,6 @@ spec:
 # requiredDuringSchedulingIgnoredDuringExecution - hard rule - only keep pod near other pod (if insufficent resources in nodes ;pod is pending)
 # preferredDuringSchedulingIgnoredDuringExecution - soft rule - keep pod in other node is no enough resources
 # Pod affinity is an inter-Pod scheduling mechanism that places a new Pod relative to other Pods already running in the cluster. It selects existing Pods using their labels and uses a topologyKey, such as kubernetes.io/hostname or topology.kubernetes.io/zone, to define whether the workloads should be on the same node or in the same availability zone. Required Pod affinity is a hard rule and can leave a Pod Pending, while preferred affinity is a soft rule that influences scheduler scoring.
+
+#pod affinty to keep microservice and cache near for faster access
+#pod antiaffinity to keep same microservcies in diff pods for max availabilty;no singlepoint of failure

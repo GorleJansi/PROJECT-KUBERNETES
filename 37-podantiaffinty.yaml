@@ -24,12 +24,18 @@ spec:
                     operator: In
                     values:
                       - frontend
-              topologyKey: kubernetes.io/histname        
+              topologyKey: kubernetes.io/hostname        
       containers:
         - name: "antiffinity-p"
           image: nginx
 
 
 
-#pod-antiaffinity- dont keep pods with matching labels together
+#pod-antiaffinity- dont keep pods with matching labels together (seperate node or zone)
 #scheduler checks labels of pods already running incluster and decide on which node to place
+# preferred pod antiaffinity will keep pods away from eachother in diff node or zone but doesnt gurantee a equal distribution like 2-2-2 each nodes/zone based on maxskew
+
+
+#kubectl get pods -n <namespcae> -o wide ->check if pods are in diff nodes
+#kubectl get pods -n roboshop --show-labels
+#kubectl get nodes -L  kubernetes.io/hostname , topology.kubernetes.io/zone
