@@ -15,22 +15,23 @@ spec:
       component: redis
   template:
     metadata:
-      project: roboshop
-      component: redis
-    spec:
-      affinity:
-        podAffinity:                  #schedule this node near pod baased on labe;s from labelselector
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - backend
-              topologyKey: kubernetes.io/hostname              #tells Kubernetes what “close together” means.here it is in same worker node
-      containers:
-        - name: "podaffinity-c"
-          image: nginx
+      labels:
+        project: roboshop
+        component: redis
+      spec:
+        affinity:
+          podAffinity:                  #schedule this node near pod baased on labe;s from labelselector
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - backend
+                topologyKey: kubernetes.io/hostname              #tells Kubernetes what “close together” means.here it is in same worker node
+        containers:
+          - name: "podaffinity-c"
+            image: nginx
 
 
 
