@@ -1,0 +1,59 @@
+---
+apiversion: v1
+Kind: pod
+metadata:
+  name: "emptydir-pod"
+  namespace: roboshop
+spec:
+  containers:
+    - name: "emptydir-c1"
+      image: busybox
+      command:
+        - sh
+        - c
+        - |
+          while true; do
+            date >> /data/dateoutput.log
+            sleep 10
+          done  
+      volumeMounts:
+        - name: shared-volume
+          mountPaths: /data
+
+    - name:  "emptydir-c2" 
+      image: busybox
+      command:
+        - sh
+        - c
+        - |
+          while true; do 
+            touch /data/dateoutput.log
+            tail -f /data/dateoutput.log
+      volumeMounts:
+        - name: shared-volume
+          mountPaths: /data  
+          
+  volumes:
+    - name: empty-dir
+      emptyDir: {}            
+
+
+
+
+
+# container gets writeable layer which will be deleted when container stops
+# emptydir will create storage for pod when started and deleted when pod premenatly removed
+# emptydir survives container restarts but wont survive pod deletion
+#all containers in pod can access shared storage'
+# give same mount path in both containers to use share volume
+
+# Pod
+# │
+# ├── Writer container
+# │      └── writes to /data/output.log
+# │
+# ├── Reader container
+# │      └── reads /data/output.log
+# │
+# └── emptyDir volume
+#        └── shared between both containers

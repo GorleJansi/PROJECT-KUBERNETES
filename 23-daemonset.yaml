@@ -22,8 +22,13 @@ spec:
           project: roboshop
           env: dev
       spec:
-        # nodeSelector:                       # only on specific nodes the pods will be created based on labels of nodes
-        #   daemon: monitoring                # use if pods should run on few ,instead of all
+        #  nodeSelector:                       # only on specific nodes the pods will be created based on labels of nodes
+        #    daemon: monitoring                # use if pods should run on few ,instead of all
+        # tolerations:
+        #   - key: tainttest                   # only deamonset pod will be created on on tainted nodes
+        #     operator: Equal
+        #     value: yes
+        #     effect: NoSchedule
         containers:
           - name: "test-daemon-c"
             image: nginx
@@ -36,6 +41,7 @@ spec:
               limits:
                 cpu: "150m"
                 memory: "200Mi"
+
             readinessProbe:
               httpGet:
                 path: /
