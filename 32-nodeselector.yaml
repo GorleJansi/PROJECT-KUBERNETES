@@ -1,0 +1,55 @@
+# run the pod on specific nodes only based on labels
+# add label to a node
+# create pod with node selector label 
+# scheduler will check nodeselector and assign the pod on matched node ;if no match then not scheduled on other
+# a node must have all labels in nodeselector for that pod to get scheduled
+# kubectl label node <node-name> key=value
+# kubectl get nodes --show-labels
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: roboshop
+spec:
+  replicas: 3                       #all three pods are created in same node matching node selector
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      nodeSelector:
+        workload: frontend
+
+      containers:
+        - name: frontend
+          image: nginx
+          ports:
+            - containerPort: 80
+
+#kubectl apply -f 32-nodeselector.yaml
+#kubectl get pods -n roboshop -o wide
+
+
+
+
+# nodeselector used at SCHEDULING the pod on node if label deleted later then exisisting pods not effcted,new or recreated pods not created on sam node
+# other pods can randonmly get scheduled on this node by scheduler; nodeselector dont resever the node for particular pods with labels
+# reserve the node for particular label pods ; use node selectore(only schedule on node with label)+taint-tolerartions(taint will not allow pods to run on the node;tolerations will tolerate the node in schedling)
+
+
+# nodeSelector:
+# Pod says, “I want that node.”
+
+# Taint:
+# Node says, “Do not come here.”
+
+# Toleration:
+# Pod says, “I am allowed to come.”

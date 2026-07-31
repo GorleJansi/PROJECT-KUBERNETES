@@ -1,0 +1,60 @@
+# Taint on node:
+# “Do not schedule Pods here.”
+
+# Toleration on Pod:
+# “This Pod is allowed to tolerate that taint.”
+
+#kubectl label node <node-name> taint=yes
+
+#kubectl taint nodes <node-name> key=value:NoSchedule   --->dont schedule new pods without toleration dont disturb existing pods
+#kubectl taint nodes <node-name> key=value:PerferNoSchedule --> perfer not to schedule but if no nodes are aviable then schedule on this node
+#kubectl taint nodes <node-name> key=value:NoExecute -->dont schedule new pods and remove  existing pods which dont tolerate
+
+#kubectl taint node key=value:effect- -->remove taint on node
+
+apiVersion: app/v1
+kind: StatefulSet
+metadata:
+  name: "tolerate-ss"
+  namespace: roboshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: mysql
+      env: dev
+  template:   
+    metadata:
+      labels:
+        project: mysql
+        env: dev
+    spec:    
+      nodeselector:
+        taint: yes
+      tolerations:                        # all mysql pods will schedule on one node
+        - key: project
+          operator: Equals
+          value: mysql
+          effect: NoSchedule
+      containers:
+        - name: nginx
+          image: nginx
+
+
+#with tolerations scheduler will only consider the tainted node for scheduling with other nodes
+#use node selector to only schedule on the tainted node
+
+
+# tolerations:
+#   - key: dedicated
+#     operator: Exists
+#     effect: NoSchedule
+
+# Tolerate any NoSchedule taint with the key dedicated, regardless of its value.
+
+# tolerations:
+#   - key: maintenance
+#     operator: Equal
+#     value: "true"
+#     effect: NoExecute
+#     tolerationSeconds: 300        #tolerate this pod for few seconds then remove pod from node

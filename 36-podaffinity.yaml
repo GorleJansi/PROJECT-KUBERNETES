@@ -1,0 +1,39 @@
+# schedule a pod close to(same node) other pod based on labels 
+# Node affinity → checks labels on nodes
+# Pod affinity  → checks labels on other Pods
+# run redis-cache pod on same node as backend pod for less latency
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: "podaffinity-d"
+  namespace: roboshop
+spec:
+  selector:
+    matchLabels:
+      project: roboshop
+      component: redis
+  template:
+    metadata:
+      project: roboshop
+      component: redis
+    spec:
+      affinity:
+        podAffinity:                  #schedule this node near pod baased on labe;s from labelselector
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - backend
+              topologyKey: kubernetes.io/hostname              #tells Kubernetes what “close together” means.here it is in same worker node
+      containers:
+        - name: "podaffinity-c"
+          image: nginx
+
+
+
+# requiredDuringSchedulingIgnoredDuringExecution - hard rule - only keep pod near other pod (if insufficent resources in nodes ;pod is pending)
+# preferredDuringSchedulingIgnoredDuringExecution - soft rule - keep pod in other node is no enough resources
+# Pod affinity is an inter-Pod scheduling mechanism that places a new Pod relative to other Pods already running in the cluster. It selects existing Pods using their labels and uses a topologyKey, such as kubernetes.io/hostname or topology.kubernetes.io/zone, to define whether the workloads should be on the same node or in the same availability zone. Required Pod affinity is a hard rule and can leave a Pod Pending, while preferred affinity is a soft rule that influences scheduler scoring.

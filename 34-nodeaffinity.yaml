@@ -1,0 +1,47 @@
+# NODE SELCETOR--> STRICT-->WANT only this node;else pos wont run elsewhere
+# NODE AFFINITY-->SOFT--> PREFER one node;if not avaibale i will run elsewhere
+# Multiple possible nodes use this
+
+apiVersion: v1
+kind: Deployment
+metadata: 
+  name: "affinty-deoplyment"
+  namespace: roboshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: roboshop
+      project: frontend
+  template:
+    metadata:
+      component: roboshop
+      project: frontend
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: componenet
+                    operator: In
+                    values:
+                      - frontend
+                      - general
+
+      containers:
+        - name: "affinty-c1"
+          image: nginx
+
+          
+
+
+# 1. requiredDuringSchedulingIgnoredDuringExecution --> must match in given;else pod is pending
+# 2. preferredDuringSchedulingIgnoredDuringExecution --> try to match;if no match ;schedule elsewhere
+# weight can be given 1-100 highest value gets highest weight --> if two > labels give weigt to each matchexpression -->if highest not exists--next--next schedule pod accordinlgy
+
+
+#kubectl get pods - o wide -n <namespace>
+#kubectl get nodes -l component=frontend
+#kubectl describe pod <name> -n <namespace> - if pod is pendng and error didn't match Pod's node affinity/selector
+#kubectl get nodes --show-labels
