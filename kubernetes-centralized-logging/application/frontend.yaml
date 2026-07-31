@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "frontend-ds"
+  labels:
+    component: frontend
+    project: central-logging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: frontend
+      project: central-logging    
+  template:
+    metadata:
+      containers:
+        - name: "frontend-c"
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              count=1
+              while true; do
+                if [ $((count % 10)) -eq 0 ]; then
+                  echo "{\"service\":\"frontend\",\"level\":\"ERROR\",\"message\":\"database connection failed\",\"request_id\":\"req-$count\"}"
+                else
+                  echo "{\"service\":\"frontend\",\"level\":\"INFO\",\"message\":\"frontend request completed\",\"request_id\":\"req-$count\"}"
+                fi
+                count=$((count + 1))
+                sleep 5
+              done
+          

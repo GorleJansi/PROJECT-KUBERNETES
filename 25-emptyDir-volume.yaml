@@ -13,11 +13,9 @@ spec:
         - -c
         - |
           while true; do
-            date >> /data/dateoutput.log
-            sleep 10
-          done  
+            date >> /data/dateoutput.log               
       volumeMounts:
-        - name: shared-volume
+        - name: shared-volume                         # data stored in /data can be accessed in mounte path of other 
           mountPath: /data
 
     - name:  "emptydir-c2" 
@@ -40,19 +38,24 @@ spec:
 
 
 
-# container gets writeable layer which will be deleted when container stops
+# container gets writeable layer which will be deleted when container stops,restarts
 # emptydir will create storage for pod when started and deleted when pod premenatly removed
 # emptydir survives container restarts but wont survive pod deletion
-#all containers in pod can access shared storage'
-# give same mount path in both containers to use share volume
+# all containers in pod can access shared storage
+#initconatiner can peform someaction store the files,data in emptydir which can be accessed by main container
 
 # Pod
 # │
 # ├── Writer container
-# │      └── writes to /data/output.log
+# │      └── writes to creates /data/output.log ,write,store the file in emptydir
 # │
 # ├── Reader container
-# │      └── reads /data/output.log
+# │      └── reads /data/dateoutput.log reads files in emptydir from this path
 # │
 # └── emptyDir volume
 #        └── shared between both containers
+
+
+# when pod starts , emptydir created dir in pod temp storage which can accessed by who mounts the path;one can write to dir other can read the dir
+
+# emptyDir is an ephemeral Kubernetes volume created when a Pod is assigned to a node. It starts empty and can be shared by multiple containers inside the same Pod. Its data survives individual container restarts because the volume belongs to the Pod. However, when the Pod is deleted, evicted, or recreated on another node, the data is lost. We commonly use emptyDir for temporary cache, scratch space, build artifacts, sharing data between an init container and the main container, or sharing files between application and sidecar containers. For permanent data such as database files, we use a PersistentVolumeClaim instead.

@@ -1,0 +1,48 @@
+# hostpath creates mount a file/dir from node into pod
+# hostpth allows access of nodes files  to containers in specific path
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-pod
+  namespace: roboshop
+spec:
+  containers:
+    - name: "hostpath-c1"
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            echo " date from container in pod $(date) >> /app-data/output.log"  
+          done
+      volumeMounts:
+        - name: "volume-1"
+          mountPath: /app-date
+  volumes:
+    - name: "volume-1"  
+      hostPath:
+        path: /data/roboshop
+        type: DirectoryOrCreate        #Create the directory if missing
+
+
+
+# hostPath is node-specific
+# The container writes to: /app-data/output.log
+# But the actual file is stored on the worker node at: /data/roboshop/output.log
+# yes—as long as the replacement Pod runs on the same node.hostPath data survive Pod deletion
+# data survives pod deletion ,bcs data is in node 
+---
+# The logging container can now read the node’s /var/log directory.
+# volumeMounts:
+#   - name: varlog
+#     mountPath: /var/log
+#     readOnly: true
+
+# volumes:
+#   - name: varlog
+#     hostPath:
+#       path: /var/log
+#       type: Directory
+---
