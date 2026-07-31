@@ -18,7 +18,7 @@ spec:
           done  
       volumeMounts:
         - name: shared-volume
-          mountPaths: /data
+          mountPath: /data
 
     - name:  "emptydir-c2" 
       image: busybox
@@ -30,7 +30,7 @@ spec:
             tail -f /data/dateoutput.log
       volumeMounts:
         - name: shared-volume
-          mountPaths: /data  
+          mountPath: /data  
           
   volumes:
     - name: shared-volume
