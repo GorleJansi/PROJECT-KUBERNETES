@@ -1,0 +1,52 @@
+# job is used to perform one time task 
+# it creates pods run a task after success stops the container 
+# if task failed then container is restarted or pod is recreated based on restart policy
+# ex: db backup,importing exporting data,generating reports,processing files etc
+#  deployment - container should run infinte time if pod failed then restart ; job will run until completion of task then exit 0 successfully
+
+
+
+apiVersion: batch/v1
+kind: job
+metadata:
+  name: data-loader
+  namespace: roboshop
+spec:
+
+  completions: 6            #how many pods to complete succesfully to mark job as scompleted
+  parallelism: 2            #how many pods can run run parllel
+  backoffLimit: 3           #how many failed pods will k8s tolerate before marking job failed
+  template:
+    metadata:
+      labels:
+        app: data-loader
+    spec:
+      containers:
+        - name: data-loader
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo " data loading started ....."
+              sleep 5
+              echo "data loading ending ...!"
+      restartpolicy: Never      # use OnFailure/Never(creates new pod)
+
+
+      #kubectl get jobs -n roboshop
+      #kubectl get pods -n roboshop
+      #kubectl logs job data-loader -n roboshop        
+
+# kubectl apply -f job.yaml
+# api server performs authentication,authorization,validation
+# store job object in etcd
+# job controller detect new job
+# job controller creates pod
+# scheduler notice pending nodes and assign to node
+# kublet start pod ,request containerd
+# containerd pull image,createand start container
+# container runs command
+# main process in conatiner exits 0
+# pod status becomes successed
+# job status becomes completed
