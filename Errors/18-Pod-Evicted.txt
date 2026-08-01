@@ -1,0 +1,33 @@
+Common causes:
+    Node memory pressure -- ookilled
+    Disk pressure
+    Ephemeral storage exhausted
+    PID pressure
+    Node pressure eviction
+
+commands:
+    kubectl describe pod <pod-name> -n <ns>
+    kubectl get nodes
+    kubectl describe node <node-name>
+
+    kubectl top node
+    kubectl top pod -A
+
+    kubectl get events -A --sort-by=.lastTimestamp    
+
+Look for:
+
+MemoryPressure
+DiskPressure
+ephemeral-storage
+
+Under node pressure, kubelet may reclaim resources and evict Pods
+
+
+Fix
+    Clean unused images and logs
+    Configure log rotation on nodes
+    Add disk or memory capacity
+    Configure ephemeral-storage requests and limits
+    Right-size applications
+    Scale the node group

@@ -1,0 +1,16 @@
+kubectl get deployment <name> -n <ns>
+kubectl rolleout status deployment <name> -n <ns>
+        error: Waiting for deployment rollout to finish
+              deployment exceeded its progress deadline
+kubectl rollout history deployment <name> -n <ns>              
+kubectl describe deployment frontend -n production
+
+
+Common causes:
+        New image cannot be pulled
+        Readiness probe fails
+        Application crashes
+        Insufficient capacity for new Pods
+        maxUnavailable and maxSurge conflict with capacity
+        PVC cannot be attached
+        PodDisruptionBudget or scheduling rules block progress

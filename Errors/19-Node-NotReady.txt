@@ -1,0 +1,32 @@
+causes:
+    Kubelet stopped
+    Container runtime stopped
+    Node lost network connectivity
+    Disk or memory pressure
+    CNI plugin failure
+    Certificate expired
+    Node cannot reach the API server
+    Cloud VM is unhealthy
+
+commands:
+    kubectl get nodes -o wide
+    kubectl describe node <node-name>
+    kubectl get events -A --sort-by=.lastTimestamp    
+
+### kubectl debug node/<node-name> -it --image=ubuntu   ->logs into node
+    Kubernetes supports kubectl debug node for deploying a diagnostic Pod onto a target node.
+
+        On the node:
+        sudo systemctl status kubelet
+        sudo journalctl -u kubelet --since "30 minutes ago"
+
+        sudo systemctl status containerd
+        sudo journalctl -u containerd --since "30 minutes ago"
+
+        df -h
+        free -m
+
+
+
+For a NotReady node, I inspect node conditions and events first. Then I check kubelet, container runtime, disk, memory, CNI and API-server connectivity.
+'I cordon the node to prevent new scheduling and drain it only after considering workload availability and PodDisruptionBudgets.        

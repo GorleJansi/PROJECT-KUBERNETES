@@ -1,0 +1,20 @@
+pvc - created-A block volume using ReadWriteOnce is still attached to the old node while a replacement Pod is scheduled on another node.
+
+
+ebs volume - at a time can be attached to one node only
+ReadWriteOnce / RWO -Read-write from one node- when Pods run on the same node - all pods can access this storage
+
+
+efs volume - at be given many nodes at a time
+ReadWriteMany / RWX-Read-write from multiple nodes -pods from different nodes can access this
+
+commands:
+    kubectl get pods -n production -o wide
+    kubectl describe pod <pod-name> -n production
+    kubectl get volumeattachment
+    kubectl describe pv <pv-name>
+
+
+causes:
+    Wait for detach to complete
+    Remove a stuck Pod from the previous node after validating safety

@@ -1,0 +1,59 @@
+# PDB protects app from voluntry disruptions
+#     kubectl drain node
+#     Node maintenance
+#     Cluster Autoscaler removing a node
+#     Administrator voluntarily evicting Pods
+#     Node-group upgrade using eviction
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: roboshop
+spec:
+  replicas: 4
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            
+---            
+
+apiVersion: policy/v1
+kind:  PodDisruptionBudget
+metadata:  
+  name: "test-PDB"
+  namespace: roboshop
+spec:
+  minAvailable: 2
+  selector:
+    matchlables:
+      app: frontend
+
+
+      # pdb applied to frontend pods min 2 pods shiuld be running in the cluster
+#pdb doenst protect from node,pod,container crashes      

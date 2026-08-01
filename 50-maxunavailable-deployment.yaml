@@ -1,0 +1,83 @@
+# maxUnavailable - During an update, what is the maximum number of desired Pods that can be unavailable?
+# Desired Pods:       4
+# Can be unavailable: 1
+# Must remain ready:  3
+
+# maxSurge: How many extra Pods can Kubernetes temporarily create above the desired replica count?
+# Desired Pods:        4
+# Extra allowed Pods:  1
+# Maximum total Pods:  5
+
+# During an update:
+# Old Pods:  Pod1 Pod2 Pod3 Pod4
+# New Pod:   Pod5
+
+# Total temporarily: 5
+
+# After Pod5 becomes ready, Kubernetes removes one old Pod.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "test-deploy"
+  namespace: roboshop
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLables:
+     app: frontend
+  template:
+    metadata:
+      labels:
+         app: frontend
+    spec:
+      containers:
+        - name: "test-deploy-pod"
+          image: nginx:1.27
+          ports:
+            containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            intialDelaySeconds : 10
+            periodSeconds: 5         
+      
+
+# When the image changes from nginx:1.27 to nginx:1.28, the process is approximately:
+
+# Initial:
+
+# Old Pods: 4
+# New Pods: 0
+# Total:    4
+
+# Step 1: Create one new Pod
+
+# Old Pods: 4
+# New Pods: 1
+# Total:    5  ← maxSurge allows this
+
+# Step 2: New Pod becomes Ready
+
+# Old Pods: 4
+# New Pods: 1
+# Ready:    5
+
+# Step 3: Delete one old Pod
+
+# Old Pods: 3
+# New Pods: 1
+# Total:    4
+
+# The process repeats until:
+
+# Old Pods: 0
+# New Pods: 4
+
+# increase maxSurge for faster rollout at a time many new pods created and when ready old pods
