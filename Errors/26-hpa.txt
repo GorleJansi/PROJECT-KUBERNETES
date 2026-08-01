@@ -1,0 +1,24 @@
+    hpa is cluster level component uses deployment,statefulset to scale ; increase or decrease the replicas of pods based on resoources cpu,mem other metrics provided by metrics server
+    deployment,stateful set need resources component in pod, for hpa to compare current cpu collected by metrics server to requests,limits of resources in pod
+
+
+hpa = current metrics of pods from metrics server - requests of mresource in pod == decide increase pods or decrease
+
+kubectl get hpa -n <ns>
+
+NAME       REFERENCE             TARGETS          REPLICAS
+frontend   Deployment/frontend   <unknown>/70%    3
+
+causes:
+    metrics server unavialable
+    cpu requests not configured in pod
+    Incorrect metric name
+    HPA cannot retrieve Pod metrics
+    Pods are not Ready
+
+commands:
+kubectl describe hpa <name> -n <ns>
+kubectl get hpa <name> -n <ns> -o yaml
+
+kubectl top pods -n production
+kubectl get apiservice | grep metrics    

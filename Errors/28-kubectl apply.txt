@@ -1,0 +1,17 @@
+kubectl apply validation errors
+
+Common causes
+    Incorrect YAML indentation
+    Wrong API version
+    Wrong resource kind
+    Field placed at the wrong level
+    String used instead of integer
+    Unsupported or misspelled field
+
+commands:
+    kubectl apply --dry-run=client -f deployment.yaml
+    kubectl apply --dry-run=server -f deployment.yaml
+
+    kubectl explain deployment
+    kubectl explain deployment.spec
+    
