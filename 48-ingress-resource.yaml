@@ -55,3 +55,12 @@ spec:
 #              ↓
 # Pods:
 # label = app=catalogue
+
+
+# ingress lb -->host/path based iruting --> Host/path rules-->tg
+                                                            # ├── frontend Service --> frontend app pods
+                                                            # ├── cart Service
+                                                            # ├── catalogue Service
+                                                            # └── payment Service
+# service =lb --> frontend Service --> frontend app pods
+# ervice = lb --> backend Service -->  backend app pods                                                   
