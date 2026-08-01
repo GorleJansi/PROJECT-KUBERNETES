@@ -1,0 +1,54 @@
+Metrics Server normally runs as a Deployment, which creates a one central Metrics Server Pod in cluster, usually inside the kube-system namespace.
+
+
+Install Metrics Server: Run this from the machine where your kubectl is configured:
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml  
+
+above creates : 
+
+Deployment
+   └── Creates the Metrics Server Pod
+
+Service
+   └── Provides an internal address for Metrics Server
+
+APIService
+   └── Registers metrics.k8s.io with the API server
+
+ServiceAccount
+   └── Identity used by the Metrics Server Pod
+
+ClusterRole and ClusterRoleBinding
+   └── Provide permission to read node and pod information
+
+
+kubectl get all -n kube-system | grep metrics-server
+kubectl get apiservice | grep metrics
+kubectl get clusterrole,clusterrolebinding | grep metrics-server
+
+
+
+
+Metrics Server is a cluster-level Kubernetes component that collects current CPU and memory usage from the kubelet running on each node. It exposes the data through the metrics.k8s.io API.
+ Kubernetes uses these metrics for kubectl top and resource-based Horizontal Pod Autoscaling. Metrics Server does not store historical metrics; 
+for historical monitoring and alerting, we use tools such as Prometheus and Grafana.
+
+
+
+Application containers
+        │
+        │ CPU and memory usage collected by kublet and store at /metrics/resource
+        ▼
+Kubelet on every node
+        │
+        │ /metrics/resource read by metric server
+        ▼
+Metrics Server Pod
+        │
+        │ metrics.k8s.io API
+        ▼
+Kubernetes API Server
+        │
+        ├── kubectl top pods
+        ├── kubectl top nodes
+        └── Horizontal Pod Autoscaler

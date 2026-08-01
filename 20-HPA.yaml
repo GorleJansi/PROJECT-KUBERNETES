@@ -66,7 +66,7 @@ spec:
     name: "hpa-test"
 
   minReplicas: 2
-  maxReplicas: 10
+  maxReplicas: 5
   metrics: 
     - type: Resource
       resource:
@@ -77,11 +77,33 @@ spec:
 
 
 
+# HPA will automaticlly increase or decraese replicas of pods based on cpu,mem, or other metrics
+
+
+# Normal traffic                       High traffic
+
+# Frontend Pods: 2                     Frontend Pods: 5
+
+# ┌─────┐ ┌─────┐                      ┌─────┐ ┌─────┐ ┌─────┐
+# │Pod 1│ │Pod 2│                      │Pod 1│ │Pod 2│ │Pod 3│
+# └─────┘ └─────┘                      └─────┘ └─────┘ └─────┘
+#                                       ┌─────┐ ┌─────┐
+#                                       │Pod 4│ │Pod 5│
+#                                       └─────┘ └─────┘
 
 
 
+# Metrics Server collects resource metrics from each node’s kubelet and exposes them through the Kubernetes API as metrics.k8s.io.
+# Both kubectl top and HPA use this metrics pipeline.
 
 
-
-
-
+# Metrics Server reports CPU
+#           │
+#           ▼
+# HPA checks current CPU
+#           │
+#           ▼
+# HPA compares it with target CPU
+#           │
+#           ▼
+# Deployment replicas increase or decrease

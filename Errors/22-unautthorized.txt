@@ -1,0 +1,17 @@
+iam user+policy(describe clsuter) -->login to workstation and use accesskey -->aws eks update-kubeconfig --> gets clustercontext,apiserver endpoints,certificate-->now user jansi can authenticate -->no permissions on resources are set
+aws-auth update add user arn map iam arn to k8s-->create role(what permissions,on what k8s resources are allowed),rolebinding(bind role to user) -->now user jansi is authroized perform tasks on k8s resources
+
+causes:
+    ca certificate expired
+    token expired
+    Kubeconfig contains invalid credentials ~/.kube/config
+    wrongcontext or user
+
+aws eks update-kubeconfig --region "us-east-1" --name <clustername> --updates kubeconfig
+
+troubleshooting:
+        kubectl config current-context
+        kubectl config get-contexts
+
+        kubectl cluster-info
+        kubectl auth whoami

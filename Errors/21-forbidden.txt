@@ -1,0 +1,26 @@
+Error from server (Forbidden):
+pods is forbidden:
+User "jansi" cannot list resource "pods"
+
+
+
+iam user+policy(describe clsuter) -->login to workstation and use accesskey -->aws eks update-kubeconfig --> gets clustercontext,apiserver endpoints,certificate-->now user jansi can authenticate -->no permissions on resources are set
+aws-auth update add user arn map iam arn to k8s-->create role(what permissions,on what k8s resources are allowed),rolebinding(bind role to user) -->now user jansi is authroized perform tasks on k8s resources
+
+
+authenticate request will be rejected with 401 unauthorized
+authenticated but unauthorized will be rejected with 403 forbidden
+
+answer:
+A Forbidden error means the identity is authenticated but not authorized. 
+I identify the user or ServiceAccount, run kubectl auth can-i, and inspect the relevant Role, ClusterRole and bindings while maintaining least privilege.
+
+
+commands:
+kubectl auth can-i get pods -n <namespcae>
+kubcetl auth can-i create deployment -n <namespace>
+kubectl auth can-i list pods --as=userjansi -n production
+
+kubectl get role,rolebinding -n production
+kubectl get clusterrole,clusterrolebinding
+kubectl describe rolebinding <binding-name> -n production

@@ -1,0 +1,22 @@
+workstation ec2---------------------------------------> api-server
+kubectl                                                AUTHENTICATION: aws-auth configMap - add user
+eksctl                                                 AUTHORIZATION: create role with what permissions u want to give to the user 
+aws configure ( user accesskey,secretkey)                             create rolebinding =bind reoleRef to subjects
+aws eks update-kubeconfig (adds apiserver endpoints,cert,token)
+
+errors: on workstation trying to connect to cluster
+    The connection to the server localhost:8080 was refused
+    Unable to connect to the server: i/o timeout
+
+causes:
+    apiendpoint is unreachable,wring
+    firewall ,sg blocks access
+    Incorrect server address in kubeconfig
+    control plane endpoint is unavailable
+
+Troubleshooting:
+
+    ls -l  ~/.kube/config
+    kubectl config view
+    kubectl config current-context
+    kubectl clusterinfo
