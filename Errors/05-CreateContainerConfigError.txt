@@ -1,0 +1,22 @@
+
+causes:
+        refrenced configmap,secret doent exist
+        configmap key is defined and refered are not same
+        invalid volume reference
+commands:
+    kubectl get pods -n <ns>
+    kubectl describe pod <name> -n <ns>      
+    kubectl get configmap <name> -o jsonpath='{.data.key}' -n <ns>    
+    kubectl get deployment <name> -n <ns>  -o yaml
+
+
+kubectl get configmap -n production
+kubectl get secret -n production
+kubectl get serviceaccount -n production
+
+fix:
+    create missing object or fic the key name
+
+answer:
+    CreateContainerConfigError usually means Kubernetes cannot build the container configuration.
+    I inspect events and verify ConfigMap, Secret, volume and ServiceAccount references in the same namespace.

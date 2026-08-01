@@ -1,0 +1,32 @@
+kubectl get pods -n production
+
+NAME       READY   STATUS    RESTARTS
+frontend   0/1     Pending   0
+
+- all nodes resources are insufficient
+- node selector in pod might not match any nodes
+- node affinity is requiredDuringSchedulingIgnoredDuringExceution so label might not match
+- pod antiaffinty is requiredDuringSchedulingIgnoredDuringExceution so pods placed each in one node and no nodes left to place this
+- all nodes are tainted and pod doesnt provide any tolerations
+
+answer:
+I first describe the Pending Pod and inspect FailedScheduling events. 
+I check resource requests, node allocatable capacity, taints, tolerations, node affinity and PVC status.
+ Based on the event, I either correct scheduling rules, reduce requests or scale the node group.
+
+commands:
+kubectl get pods -n <ns>
+kubectl describe pod <pod> -n <ns>  --> check error
+
+kubectl get nodes 
+kunectl describe node <ns>
+
+kubectl top nodes
+kubectl top pods -n <ns>
+
+fixes:
+
+Reduce requests in pod
+Scale the node group if nodes are insufficient
+Correct node selector or affinity in pod
+Add the correct toleration to pod for node required

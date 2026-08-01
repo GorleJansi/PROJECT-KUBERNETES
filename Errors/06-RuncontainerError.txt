@@ -1,0 +1,21 @@
+image pulled,container craeted,after running containers, instructions inside image execute ,if there is error while performing give this error
+
+causes:
+    Invalid container command
+    Executable is missing
+    Permission denied
+    Incorrect working directory
+    Invalid runtime configuration
+    Volume mount problem
+
+Commands:
+    kubectl describe pod <pod-name> -n production
+    kubectl logs <pod-name> -n production
+
+fix:
+ 1. fix the image and build then push
+      Add executable permissions during image build -- RUN
+      Correct the command -- CMD
+      Use the correct entry point --ENTRYPOINT
+      Verify the file exists in the image 
+  2. PULL NEW IMAGE       

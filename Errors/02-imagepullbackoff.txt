@@ -1,0 +1,30 @@
+containerd will try to pull image from image repository if not available local , get the image create a container, start the container with imageid
+if image name is incorrect or missing authentication details of private registry can cause imgepullbackoff 
+
+imgepullbackoff means container is not started bcs of image can be pulled from registry
+
+
+kubectl get pods -n <ns>
+kubectl describe pod <pod> -n <ns>
+    Failed to pull image "repo/frontend:1.5":
+    manifest unknown
+kubectl get deployment <name> -n <ns> -o jsonpath='{.spec.template.spec.containers[*].image}'    -->Check the Deployment image
+
+
+
+create secret store registry deatils:
+kubectl create secret docker-registry registry-secret \
+  --docker-server=<registry-url> \
+  --docker-username=<username> \
+  --docker-password=<password> \
+  -n production
+
+Reference it:
+spec:
+  imagePullSecrets:
+    - name: registry-secret  
+
+
+answer:
+For ImagePullBackOff, I inspect Pod events to identify whether the issue is an invalid tag, missing image, registry authentication or network connectivity.
+ I verify the exact image in the Deployment and check imagePullSecrets or the node’s registry permissions.    

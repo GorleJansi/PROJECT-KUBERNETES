@@ -1,0 +1,67 @@
+init containers are used to perform tasks before main containers run like dependency connection,loading config files,file permisions,loading data,after successful completion of initconatiners only main conatiners runs
+
+specialized containers that run and complete their tasks before the main application containers start inside a Kubernetes Pod. 
+They are designed to manage pre-requisite setup work, dependency checks, or configuration generations without bloating your core application image.
+
+characters:
+        sequentially execute: of initcontainer after success of one another
+        blocking main conatiner execution: until every init container exits successfully (with code 0).
+        resource sharing: same as main conatiner volume,network
+usecases:
+        migrate db schema before starting webserver
+        wait for dependeny apps like db to start before satrting backend
+        downloading git clone,config,app code and storing in sahred volume of main conatiner
+        handling permissions on file,storage
+        keeps utility tools out of main image
+
+errors:
+        Init:0/1
+        Init:Error
+        Init:CrashLoopBackOff
+
+causes:
+       Required Secret is missing
+        File permission problem
+        Incorrect script
+        Dependency never becomes available     
+
+commands:
+    kubectl get pod <name> -n <ns> -o jsonpath='{.status.initcontainerstatuses}  
+    kubectl describe pod <name> -n <ns>    
+    kubectl logs pod <name> -c <initcontainername> -n <ns>  
+    kubectl logs <pod-name>  -c <init-container-name> --previous  -n <ns> -- if initconatiner failed and restrted
+
+example: 
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: "test-pod"
+    namespace: roboshop
+spec:
+    initContainers:
+        - name: "basicinit"
+            image: busybox
+            command:
+                - sh
+                - -c
+                - |
+                 echo "data loading started..." >> /data/output.log
+                 sleep 5
+                 echo "data loading completed..!" >> /data/output.log
+        - name: wait-for-db
+            image: busybox:1.36
+            command: ['sh', '-c', 'until nc -z db-service 3306; do echo waiting for db; sleep 2; done;']
+           
+
+    containers: 
+        - name" "test-c"
+          image: nginx
+          resources:
+            requests:
+                cpu: 100m
+                memeory: 150Mi
+            limits:
+                cpu: 150m
+                memeory: 200Mi       

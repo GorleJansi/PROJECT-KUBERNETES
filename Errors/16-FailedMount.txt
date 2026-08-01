@@ -1,0 +1,42 @@
+MountVolume.SetUp failed
+
+Causes:
+        ConfigMap or Secret is missing
+        PVC is not bound
+        CSI driver issue
+        Volume does not exist
+        Node lacks permission
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+  namespace: roboshop
+spec:
+  containers:
+    - name: mysql-volume
+      image: mysql
+      volumeMounts:
+        - name: setup
+          mountPath: /var/lib/mysql
+
+    - name: nginxvolume
+      image: nginx
+      volumeMounts:
+        - name: nginx-setup
+          mountPath: /etc
+
+  volumes:
+    - name: setup
+      persistentVolumeClaim:
+        claimName: test-pvc
+
+    - name: nginx-setup
+      configMap:
+        name: test-configmap
+----
+
+configmap "test-configmap" not found -- if existing ConfigMap not found
+persistentvolumeclaim "test-pvc" not found -- if existing existing PVC not found
+mountfailed -- if pvc exists but not bound to pv

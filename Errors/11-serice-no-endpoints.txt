@@ -1,0 +1,9 @@
+kubectl get endpoints service <service-name> -n <ns>   -->gets endpoints of services
+
+if no endpoints:
+    label mismatch in selctor label and pod label
+    Service exists in another namespace
+    CoreDNS Pods are down
+    NetworkPolicy blocks DNS on UDP/TCP 53
+    Incorrect /etc/resolv.conf
+    CNI networking issue

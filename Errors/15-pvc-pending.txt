@@ -1,0 +1,17 @@
+create storageclass -->creates  disk ,pv and bind pv to pvc
+create pvc - refer correct storageclass
+create pod --> refer pvc ,mount volume
+
+if pvc is showing pending then refered StorageClass does not exist , wrong StorageClass name access mode wrong,storage cant be provided
+
+
+commands:
+    kubectl get pvc -n <ns>
+    kubectl describe pvc <pvc-name> -n <ns>  -->check if it binded to pv or not and why
+    kubectl get pv 
+    kubectl get storage class
+    kubectl describe storageclass <storage-class>
+
+answer:
+For a Pending PVC, I inspect the PVC events, verify the StorageClass and CSI provisioner, and check access mode, requested capacity, topology and available PVs.
+ In cloud environments, I also verify the CSI driver’s cloud permissions.    

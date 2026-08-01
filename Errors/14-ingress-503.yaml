@@ -1,0 +1,27 @@
+500 series are Server Error --> 500 internal server error, 502 badgateway,503 Service Unavailable(backend servers are down), 504 Gateway Timeout(backend recieved req - process-doesnt send response in time )
+
+causes:
+      serice has no endpoints
+      service labels dont match pod
+      pod are not ready
+      wrong service or target ports
+      NetworkPolicy blocks traffic
+
+commands:
+      kubectl get pods --show-labels -n <ns> 
+      kubectl get deployment <name> -n <ns> -o jsonpath='{.spec.selector}'
+      kubectl get endpoints service <svc> -n <ns>
+      kubectl describe ingress <name> -n production
+
+test:
+    Test each level:
+
+        Pod IP:port       curl http://<pod-ip>:8080
+            ↓
+        Service name:port  curl http://<svc>:80
+            ↓
+        Ingress/load balancer  curl -H "Host: shop.example.com" http://<ingress-address>
+
+        
+       
+        

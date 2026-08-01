@@ -1,0 +1,26 @@
+livenessProbe: check health of api inside conatiner if health is not good then it will restart the conatiner entire container lifecycle
+[ ec2-user@ip-172-31-20-118 ~ ]$ kubectl get pods -n roboshop
+NAME     READY   STATUS    RESTARTS   AGE
+x        0/1     Running   4         144m
+
+livenessProbe:
+    httpsGet:
+        path: /health
+        port: 80
+    intialDelaySeconds: 10
+    periodSeconds: 5 
+
+RESTARTS increases if liveinessprobe finds app is unhealthy 
+
+
+causes:
+    app startup may require long time
+    wrong path or port
+    probe timout is short
+
+
+    A badly configured liveness probe can restart healthy containers, particularly during high load. 
+    Startup probes can protect slow-starting applications until initialization finishes.
+
+ ## Readiness failure: Stops traffic to the Pod.
+    Liveness failure: Restarts the container.   

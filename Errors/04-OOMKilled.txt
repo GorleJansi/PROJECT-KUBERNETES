@@ -1,0 +1,35 @@
+container will be given a memory limit if the memory exceeds the limit the k8s will kill the container with oommemory killed
+container can use memory above requested if available if memory usgae exceeds limits then container terminated
+
+apiVersion: v1
+kind: Pod
+metadata:
+    name: "test-pod"
+    namespace: roboshop
+spec:
+    containers: 
+        - name" "test-c"
+          image: nginx
+          resources:
+            requests:
+                cpu: 100m
+                memeory: 150Mi
+            limits:
+                cpu: 150m
+                memeory: 200Mi                
+
+commands:
+    kubectl describe pod <name> -n <ns>       
+    kubectl logs pod <name> -n <ns>         
+    kubectl top pod <name> -n <ns> --containers
+    kubectl get pod <name> -n <ns> -o jsonpath='{.spec.containers[*].resources}"
+
+fix:
+    increases limit based on observed usage in resources
+    investigate memory leak    
+    scale memory on nodes
+
+answer:
+    i first confirm oomkilled error by describing pod checking logs of container 
+    compare actual and historical usage with the requests and limits, and check for application memory leaks.
+    I then right-size resources or fix the application.

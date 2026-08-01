@@ -1,0 +1,32 @@
+user-->ingress-->service-->endpointslice-->READY pod ip--> container port
+
+commands:
+    kubectl get svc <name> -n <ns>
+    kubetcl describe service <name> -n <ns>
+    kubectl get pods -n <ns> --show-labels
+    kubectl get endpointslices -n prod -l kubernetes.io/service-name=frontend
+
+    ## check if pod labels and svc selector labels are matching
+    kubectl get pods -n <ns> -l component=frontend
+    kubectl get svc <name> -n <ns> -o jsonpath='{.spec.selector}'
+
+causes:
+    Service selector does not match Pod labels -- no endpoints
+    Pod is not Ready    -- readinessprobe failed so not pods to send traffic
+    Wrong targetPort
+    Application is listening only on 127.0.0.1
+    NetworkPolicy blocks ingress of pod for communication to pod
+    Service is in another namespace and pod other
+    No healthy endpoints    
+
+
+## Create temporary, interactive troubleshooting pod that automatically deletes itself upon exit:
+
+    kubectl run <name-pod>  -it --image=curl --restart=Never --rm -n prod -- sh   --> creates container
+            curl http://<pod-ip>:8080       -->check if pod is running and healthy
+            curl http://frontend:80         -->check service is conecting or not
+
+
+
+I check the Service selector against Pod labels and then inspect EndpointSlices. If no endpoints exist, the selector is incorrect or the Pods are not Ready. 
+If endpoints exist, I test the Pod IP directly and then the Service DNS name to isolate application, Service or networking issues.

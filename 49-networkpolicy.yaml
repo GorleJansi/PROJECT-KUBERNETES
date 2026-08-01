@@ -1,0 +1,85 @@
+# A NetworkPolicy controls which Pods can communicate with other Pods or external networks.
+
+# Ingress: FROM whom → selected Pod
+
+# Egress: Selected Pod → TO whom
+
+# by default k8s allows all pods in cluster can communicate
+# ex: we want only backend pod to connect to db pods so restrict ingress traffic to pod
+
+# network policy selects pods it protects from ingress traffic from other pods and egress traffic to other pods
+
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: "frontend-pod"
+    namespace: roboshop
+    labels:
+        app: frontend
+spec:
+    containers:
+        - name: "frontend-pod"
+          image: nginx
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: "backend-pod"
+    namespace: roboshop
+    labels:
+        app: backend
+spec:
+    containers:
+        - name: "backend-pod"
+          image: nginx
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: "db-pod"
+    namespace: roboshop
+    labels:
+        app: db
+spec:
+    containers:
+        - name: "db-pod"
+          image: nginx
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-database
+  namespace: roboshop
+spec:
+  podSelector:
+    matchLabels:
+      app: db               #policy protects this pod
+
+  policyTypes:              # traffic flow direction
+    - Ingress               #controls traffic into the pod
+
+  ingress:
+    - from:                         # allowed from
+        - podSelector:
+            matchLabels:
+              app: backend
+      ports:               #allowed on to which port
+        - protocol: TCP
+          port: 3306
+                  
+
+# Backend Pod ──TCP 3306──> Database Pod     Allowed
+
+# Frontend Pod ───────────> Database Pod     Blocked
+# Random Pod ─────────────> Database Pod     Blocked
+
+
+# Kubernetes NetworkPolicy is used to control ingress and egress traffic at the Pod level. By default, Pods can usually communicate freely with each other. We use NetworkPolicies to implement least-privilege communication. For example, in a three-tier application, we allow frontend Pods to communicate only with backend Pods, and backend Pods to communicate with database Pods on the required port. We first apply a default-deny policy and then create specific allow rules using pod selectors, namespace selectors, ports and IP blocks. NetworkPolicy enforcement depends on a supported CNI such as Calico or Cilium.

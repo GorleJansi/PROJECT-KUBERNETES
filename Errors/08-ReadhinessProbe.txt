@@ -1,0 +1,32 @@
+Pod is Running, but READY 0/1
+
+
+
+readinessprobe checks whether the app is ready to recieve the traffic or not on specific path and port ;container is runnning but readinessprobe is failing 
+
+[ ec2-user@ip-172-31-20-118 ~ ]$ kubectl get pods -n roboshop
+NAME     READY   STATUS    RESTARTS   AGE
+x        0/1     Running   0          144m
+
+readinessProbe:
+    httpsGet:
+        path: /ready
+        port: 80
+    intialDelaySeconds: 10
+    periodSeconds: 5   
+
+if readinessprobe is success the service adds pod as endpoint ; READY 1/1 on pod
+if readinessprobe is failure then traffic is not sent to this pod  ;  READY 0/1 on pod
+
+
+
+
+commands:
+        kubectl describe pod <pod-name> -n <ns>
+        kubectl logs <pod-name> -n <ns>     -->look for errors
+        kubectl get deployment <name> -n <ns> -o yaml -->check probe
+        kubectl exec -it pod <name> -n <ns> -- curl -v http://localhost:8080/health  -->test inside conatiner
+
+error:
+    Readiness probe failed:
+    connection refused

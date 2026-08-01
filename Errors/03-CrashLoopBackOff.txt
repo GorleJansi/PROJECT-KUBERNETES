@@ -1,0 +1,26 @@
+kublet will ask containerd to create container then it will try to pull image from image repository if not available local , get the image create a container, start the container with imageid
+container needs to run infinte time based on mainprocess started by container
+
+container starts--->crashes-k8s restarts--->then crashloopbackoff
+
+causes:
+    app errors
+    incorrect command
+    missing env variables
+    missing configmap or secrets
+    dependency components unavialable
+    liveness probe repeatdely kills the container (need more seconds because conatiner need to upload config,set dependency)
+    memory limit execeed by pod (bigger app given lower resources)
+    mounted volume missing
+
+commands:
+    kubectl describe pod <name> -n <ns>
+    kubectl logs pod <name> -n <ns>   --previous                --> single container
+    kubectl logs <pod-name> -c frontend -n production  --previous         -->multiple containers
+    kubectl logs <pod-name> --previous --timestamps
+
+    --previous  --> retrieves logs from a previously crashed or restarted container instance within the specified pod ;else shows current restrt logs
+
+answer:
+    For CrashLoopBackOff, I check describe for the exit code and last termination reason, then collect the previous container logs using kubectl logs --previous.
+    I verify commands, environment variables, Secrets, ConfigMaps, resource limits, probes and external dependencies before deploying a fix.

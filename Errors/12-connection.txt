@@ -1,0 +1,17 @@
+### connection refused
+        curl: connection refused
+
+    destination ip is reachable
+    but port is wrong ,no app listening on the port,app has not started yet
+
+    kubectl exec -it pod <name> -- netstat -nltp    -->check listening ports 
+
+### connection timedout
+  
+    Traffic is being dropped
+    NetworkPolicy blocks communication
+    Security group, firewall or route issue
+    CNI problem
+    Target is unreachable
+    
+    kubectl describe networkpolicy <policy> -n production

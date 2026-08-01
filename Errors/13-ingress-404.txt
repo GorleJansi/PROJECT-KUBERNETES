@@ -1,0 +1,85 @@
+client side error -->400 bad request ,401 unauthorized,403 forbidden,404 Not Found
+
+ingress returns 404 error if 
+    host,path dont match
+
+commands:
+    kubectl get ingress -n <ns>
+    kubectl describe ingress <ingress-name> -n <ns>
+    kubectl get ingressclass    
+
+## Test with the correct host:
+
+curl -H "Host: shop.example.com" \
+  http://<load-balancer-address>
+
+Check controller logs:
+kubectl logs -n <controller-namespace> deployment/<ingress-controller>    
+
+
+
+
+
+
+
+
+
+
+
+
+########
+host-based:
+shop.example.com → frontend-service
+admin.example.com → admin-service
+
+path-based:
+shop.example.com/           → frontend-service
+shop.example.com/catalogue  → catalogue-service
+
+#######
+
+User
+  |
+  | kubectl apply -f ingress.yaml
+  v
+Kubernetes API Server
+  |
+  | Stores Ingress resource in etcd
+  v
+etcd
+  ^
+  |
+  | Watches Ingress resource, Service and EndpointSlice
+  |
+Ingress Controller 
+  |
+  | Creates/configures load balancer
+  v
+External Load Balancer -alb
+  |
+  | based on host and path rules
+  v
+Kubernetes Service
+  |
+  v
+EndpointSlice
+  |
+  v
+Application Pods
+
+
+##########
+Without Ingress, you may create a separate LoadBalancer Service for every application:
+
+Internet
+   ├── Load Balancer 1 → frontend-service
+   ├── Load Balancer 2 → catalogue-service
+   └── Load Balancer 3 → user-service
+
+With Ingress, one load balancer can route requests to multiple Services:
+
+                         ┌── /          → frontend-service
+Internet → Load Balancer ├── /catalogue → catalogue-service
+                         └── /user      → user-service
+
+Ingress supports HTTP/HTTPS routing based mainly on hostname and URL path.
