@@ -15,15 +15,30 @@ run_as_root() {
 
 install_packages() {
     if command -v dnf >/dev/null 2>&1; then
-        run_as_root dnf install -y curl unzip tar gzip coreutils
+        run_as_root dnf install -y unzip tar gzip coreutils
     elif command -v yum >/dev/null 2>&1; then
-        run_as_root yum install -y curl unzip tar gzip coreutils
+        run_as_root yum install -y unzip tar gzip coreutils
     elif command -v apt-get >/dev/null 2>&1; then
         run_as_root apt-get update
         run_as_root apt-get install -y curl unzip tar gzip coreutils
     else
         echo "WARNING: supported package manager not found."
         echo "Expecting curl, unzip, tar, gzip, and sha256sum to already exist."
+    fi
+}
+
+require_curl() {
+    if command -v curl >/dev/null 2>&1; then
+        return
+    fi
+
+    if command -v dnf >/dev/null 2>&1; then
+        run_as_root dnf install -y curl-minimal
+    elif command -v yum >/dev/null 2>&1; then
+        run_as_root yum install -y curl-minimal
+    else
+        echo "ERROR: curl command not found"
+        exit 1
     fi
 }
 
@@ -242,6 +257,7 @@ fi
 echo
 echo "1. Installing workstation tools..."
 install_packages
+require_curl
 install_aws_cli
 install_kubectl
 install_eksctl

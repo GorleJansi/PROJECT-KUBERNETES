@@ -6,7 +6,10 @@ Daily helper scripts for starting an existing EKS lab, checking health, running 
 
 | File | Purpose |
 | --- | --- |
-| `setup-workstation-cluster.sh` | One-file EC2 workstation and EKS cluster setup flow. |
+| `setup-terraform-eks.sh` | One-file EC2 setup for Terraform-based EKS creation. |
+| `install-terraform.sh` | Installs Terraform on Linux. |
+| `terraform/` | Terraform project for VPC, IAM, EKS cluster, node group, and add-ons. |
+| `setup-workstation-cluster.sh` | Legacy one-file EC2 workstation and EKS setup using eksctl. |
 | `install-tools.sh` | Installs AWS CLI, kubectl, and eksctl together. |
 | `install-aws-cli.sh` | Installs or updates AWS CLI v2 on Linux. |
 | `install-kubectl.sh` | Installs kubectl on Linux. |
@@ -40,7 +43,64 @@ git sparse-checkout set eks-daily
 cd eks-daily
 ```
 
-## One-File EC2 Setup
+## Recommended Terraform Setup
+
+Use this path for the project. It creates EKS with Terraform instead of
+`eksctl` and avoids creating new `eksctl-roboshop-dev-*` CloudFormation stacks.
+
+Before running Terraform, confirm the old eksctl stacks are gone:
+
+```bash
+aws cloudformation list-stacks \
+  --region us-east-1 \
+  --query "StackSummaries[?contains(StackName, 'eksctl-roboshop-dev') && StackStatus!='DELETE_COMPLETE'].[StackName,StackStatus]" \
+  --output table
+```
+
+Expected result: empty output.
+
+Then run:
+
+```bash
+./setup-terraform-eks.sh
+```
+
+Type:
+
+```text
+TERRAFORM
+```
+
+This one script:
+
+1. Installs AWS CLI if needed.
+2. Installs kubectl if needed.
+3. Installs Terraform if needed.
+4. Checks AWS identity.
+5. Runs `terraform init`.
+6. Runs `terraform apply`.
+7. Updates kubeconfig.
+8. Checks Kubernetes nodes.
+
+Manual Terraform workflow:
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+aws eks update-kubeconfig --name roboshop-dev --region us-east-1
+kubectl get nodes
+```
+
+Destroy when finished:
+
+```bash
+cd terraform
+terraform destroy
+```
+
+## Legacy Eksctl Setup
 
 Use this on a fresh EC2 workstation when you want one script for everything:
 
@@ -273,6 +333,10 @@ The script asks you to type `DELETE` before it runs `eksctl delete cluster`.
 `stop.sh` stops the worker nodes by scaling the managed node group to zero, but it does not delete the EKS control plane. If you will not practice for several days, use `delete-all.sh` to remove the cluster completely.
 
 ## Troubleshooting
+
+If Amazon Linux 2023 shows a `curl-minimal conflicts with curl` error, do not
+replace `curl-minimal`. The scripts use the existing `curl` command from
+`curl-minimal` and install only the missing helper packages.
 
 If no nodes are Ready:
 

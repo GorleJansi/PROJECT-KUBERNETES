@@ -1,0 +1,15 @@
+aws_region      = "us-east-1"
+cluster_name    = "roboshop-dev"
+cluster_version = "1.34"
+
+node_group_name    = "roboshop-dev-ng"
+node_instance_type = "t3.medium"
+node_min_size      = 0
+node_desired_size  = 2
+node_max_size      = 2
+node_disk_size     = 20
+
+vpc_cidr = "10.20.0.0/16"
+
+# For a real environment, replace this with your public IP range.
+cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
