@@ -1,28 +1,39 @@
-# EKS Daily Practice Tools
+# EKS Daily Terraform Lab
 
-Daily helper scripts for starting an existing EKS lab, checking health, running kubectl practice, cleaning practice resources, stopping worker nodes, and deleting the cluster when it is no longer needed.
+This folder is the EC2 workstation setup for a daily EKS practice cluster.
+Terraform is the only supported cluster creation path in this folder.
+
+## What This Creates
+
+| Layer | Created By | Purpose |
+| --- | --- | --- |
+| AWS CLI | `install-aws-cli.sh` | AWS authentication and EKS kubeconfig updates. |
+| kubectl | `install-kubectl.sh` | Kubernetes cluster access. |
+| Terraform | `install-terraform.sh` | Infrastructure provisioning. |
+| VPC and subnets | `terraform/` | Network for the lab cluster. |
+| IAM roles | `terraform/` | EKS control plane and node permissions. |
+| EKS cluster | `terraform/` | Kubernetes control plane named `roboshop-dev`. |
+| Managed node group | `terraform/` | Worker nodes named `roboshop-dev-ng`. |
+| Kubernetes practice resources | `practice.sh` | Daily namespace, Deployment, Service, probes, and service test. |
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `setup-terraform-eks.sh` | One-file EC2 setup for Terraform-based EKS creation. |
-| `install-terraform.sh` | Installs Terraform on Linux. |
-| `terraform/` | Terraform project for VPC, IAM, EKS cluster, node group, and add-ons. |
-| `setup-workstation-cluster.sh` | Legacy one-file EC2 workstation and EKS setup using eksctl. |
-| `install-tools.sh` | Installs AWS CLI, kubectl, and eksctl together. |
+| `DELETE-STEPS.md` | Exact cleanup, stop, and full delete steps after practice. |
+| `setup-terraform-eks.sh` | One command for EC2 tool install, Terraform apply, kubeconfig, and node check. |
+| `install-tools.sh` | Installs AWS CLI, kubectl, and Terraform. |
 | `install-aws-cli.sh` | Installs or updates AWS CLI v2 on Linux. |
 | `install-kubectl.sh` | Installs kubectl on Linux. |
-| `install-eksctl.sh` | Installs eksctl on Linux. |
-| `cluster.yaml` | Optional eksctl config-file version of the cluster setup. |
+| `install-terraform.sh` | Installs Terraform on Linux. |
+| `terraform/` | Terraform code for VPC, IAM, EKS, node group, and add-ons. |
 | `config.sh` | Shared cluster, node group, region, and namespace settings. |
-| `create-cluster.sh` | Creates the EKS cluster for the first time. |
-| `start.sh` | Starts the managed node group with two worker nodes. |
 | `status.sh` | Checks AWS identity, EKS cluster, node group, nodes, system Pods, and lab resources. |
+| `start.sh` | Scales the Terraform-created managed node group back to two nodes. |
+| `stop.sh` | Deletes daily resources and scales worker nodes to zero. |
 | `practice.sh` | Runs daily kubectl practice in the `daily-lab` namespace. |
-| `cleanup.sh` | Deletes only the daily practice namespace and resources. |
-| `stop.sh` | Deletes daily resources and scales worker nodes down to zero. |
-| `delete-all.sh` | Permanently deletes the EKS cluster. |
+| `cleanup.sh` | Deletes only the daily practice namespace. |
+| `delete-all.sh` | Runs Terraform destroy for the lab infrastructure. |
 
 ## Clone Correctly
 
@@ -34,21 +45,48 @@ git clone https://github.com/GorleJansi/PROJECT-KUBERNETES.git
 cd PROJECT-KUBERNETES/eks-daily
 ```
 
-If you want only this folder:
+If the repo already exists on EC2:
 
 ```bash
-git clone --filter=blob:none --sparse https://github.com/GorleJansi/PROJECT-KUBERNETES.git
-cd PROJECT-KUBERNETES
-git sparse-checkout set eks-daily
+cd ~/PROJECT-KUBERNETES
+git pull
 cd eks-daily
 ```
 
-## Recommended Terraform Setup
+If `git pull` says local script edits would be overwritten, discard only those
+temporary EC2 edits:
 
-Use this path for the project. It creates EKS with Terraform instead of
-`eksctl` and avoids creating new `eksctl-roboshop-dev-*` CloudFormation stacks.
+```bash
+git restore eks-daily
+git pull
+cd eks-daily
+```
 
-Before running Terraform, confirm the old eksctl stacks are gone:
+## AWS Access
+
+Use an EC2 IAM role when possible. If you temporarily use `aws configure`, rotate
+the key after practice if it was pasted anywhere.
+
+Check identity:
+
+```bash
+aws sts get-caller-identity
+```
+
+The caller needs permissions for:
+
+```text
+EC2
+EKS
+IAM
+VPC
+CloudWatch Logs
+Terraform-managed resource creation and deletion
+```
+
+## Clean Old Eksctl Stacks
+
+Before Terraform, old `eksctl` CloudFormation stacks must be gone:
 
 ```bash
 aws cloudformation list-stacks \
@@ -59,9 +97,15 @@ aws cloudformation list-stacks \
 
 Expected result: empty output.
 
-Then run:
+If stacks still exist, delete them before running Terraform. Terraform should
+not be mixed with old failed `eksctl` stacks for the same cluster name.
+
+## One Command Setup
+
+Run from `eks-daily`:
 
 ```bash
+chmod +x *.sh
 ./setup-terraform-eks.sh
 ```
 
@@ -71,18 +115,24 @@ Type:
 TERRAFORM
 ```
 
-This one script:
+When Terraform asks for approval, type:
 
-1. Installs AWS CLI if needed.
-2. Installs kubectl if needed.
-3. Installs Terraform if needed.
-4. Checks AWS identity.
-5. Runs `terraform init`.
-6. Runs `terraform apply`.
-7. Updates kubeconfig.
-8. Checks Kubernetes nodes.
+```text
+yes
+```
 
-Manual Terraform workflow:
+The setup flow is:
+
+1. Install AWS CLI.
+2. Install kubectl.
+3. Install Terraform.
+4. Check AWS identity.
+5. Run `terraform init`.
+6. Run `terraform apply`.
+7. Update kubeconfig.
+8. Run `kubectl get nodes`.
+
+## Manual Terraform Flow
 
 ```bash
 cd terraform
@@ -93,200 +143,47 @@ aws eks update-kubeconfig --name roboshop-dev --region us-east-1
 kubectl get nodes
 ```
 
-Destroy when finished:
+## Verify
 
 ```bash
-cd terraform
-terraform destroy
-```
-
-## Legacy Eksctl Setup
-
-Use this on a fresh EC2 workstation when you want one script for everything:
-
-```bash
-./setup-workstation-cluster.sh
-```
-
-This one file does the full flow:
-
-1. Installs required workstation tools: AWS CLI, kubectl, and eksctl.
-2. Checks AWS identity with `aws sts get-caller-identity`.
-3. Creates the EKS control plane if it does not exist.
-4. Waits until the EKS cluster is `ACTIVE`.
-5. Creates the managed node group if it does not exist.
-6. Scales the node group to the configured desired node count.
-7. Updates kubeconfig.
-8. Waits for Kubernetes nodes to become `Ready`.
-9. Prints node and node group status.
-
-The script asks you to type `SETUP` before it installs tools or creates AWS
-resources.
-
-Use this when the cluster exists but the node group is missing too. It will
-reuse the active cluster and create the missing managed node group.
-
-## Install Tools Only
-
-Run this on the EC2 instance before creating the cluster:
-
-```bash
-./install-tools.sh
-```
-
-This installs:
-
-| Tool | Script |
-| --- | --- |
-| AWS CLI v2 | `install-aws-cli.sh` |
-| kubectl | `install-kubectl.sh` |
-| eksctl | `install-eksctl.sh` |
-
-You can also run them one by one:
-
-```bash
-./install-aws-cli.sh
-./install-kubectl.sh
-./install-eksctl.sh
-```
-
-## Prerequisites Check
-
-Check the tools:
-
-```bash
-aws --version
-kubectl version --client
-eksctl version
-```
-
-The AWS CLI must be authenticated to the account that owns the EKS cluster:
-
-```bash
-aws sts get-caller-identity
-```
-
-## Cluster Setup Only
-
-Run all commands from this folder:
-
-```bash
-cd eks-daily
-```
-
-Create the EKS cluster:
-
-```bash
-./create-cluster.sh
-```
-
-This script assumes AWS CLI, kubectl, and eksctl already exist. For a fresh EC2
-workstation, prefer:
-
-```bash
-./setup-workstation-cluster.sh
-```
-
-The direct `eksctl` command is:
-
-```bash
-eksctl create cluster \
+aws eks describe-cluster \
   --name roboshop-dev \
   --region us-east-1 \
-  --managed \
-  --nodes 2 \
-  --node-type t3.medium
-```
+  --query 'cluster.status'
 
-`create-cluster.sh` uses the same setup and also adds
-`--nodegroup-name roboshop-dev-ng`, `--nodes-min 0`, and `--nodes-max 2`,
-because the daily `start.sh`, `status.sh`, and `stop.sh` scripts need a stable
-node group name and a node group that can scale down after practice.
+aws eks list-nodegroups \
+  --cluster-name roboshop-dev \
+  --region us-east-1 \
+  --output table
 
-The script creates:
-
-| Setting | Value |
-| --- | --- |
-| Cluster name | `roboshop-dev` |
-| Region | `us-east-1` |
-| Node group | `roboshop-dev-ng` |
-| Capacity type | Managed on-demand node group |
-| Instance type | `t3.medium` |
-| Node size | min `0`, desired `2`, max `2` |
-
-The script asks you to type `CREATE` before it creates AWS resources.
-
-If the control plane already exists but the node group is missing,
-`create-cluster.sh` creates the missing node group and continues.
-
-After creation, it updates kubeconfig and checks:
-
-```bash
 kubectl get nodes
-eksctl get nodegroup --cluster roboshop-dev --region us-east-1
-```
-
-Important: EKS control plane and EC2 worker nodes can create AWS charges. Use
-`./stop.sh` after practice, or `./delete-all.sh` when you no longer need the
-cluster.
-
-## Configuration
-
-Default values are in `config.sh`:
-
-```bash
-AWS_REGION=us-east-1
-CLUSTER_NAME=roboshop-dev
-NODEGROUP_NAME=roboshop-dev-ng
-DESIRED_NODES=2
-MAX_NODES=2
-NODE_TYPE=t3.medium
-LAB_NAMESPACE=daily-lab
-```
-
-Edit `config.sh` if your cluster name, node group name, or AWS region changes.
-
-You can also override values for one command:
-
-```bash
-AWS_REGION=us-east-2 CLUSTER_NAME=my-cluster ./status.sh
-```
-
-## Daily Workflow
-
-Run all commands from this folder:
-
-```bash
-cd eks-daily
-```
-
-Start the lab:
-
-```bash
-./start.sh
-```
-
-This checks the EKS control plane, scales the managed node group to two desired worker nodes, updates kubeconfig, and waits until the Kubernetes nodes are Ready.
-
-Check cluster health:
-
-```bash
 ./status.sh
 ```
 
-Run daily kubectl practice:
+## Daily Practice
+
+Create practice resources:
 
 ```bash
 ./practice.sh
 ```
 
-This creates the `daily-lab` namespace, ConfigMap, Deployment, ReplicaSet, Pods, ClusterIP Service, EndpointSlice, readiness and liveness probes, resource requests and limits, and tests Pod self-healing and internal service connectivity.
+Check resources:
 
-Clean only the practice resources:
+```bash
+kubectl get all -n daily-lab
+kubectl get pods -n daily-lab -o wide
+kubectl get service,endpointslice -n daily-lab
+kubectl describe deployment nginx-web -n daily-lab
+```
+
+Clean only practice resources:
 
 ```bash
 ./cleanup.sh
 ```
+
+## Stop And Start Nodes
 
 Stop worker nodes after practice:
 
@@ -294,7 +191,8 @@ Stop worker nodes after practice:
 ./stop.sh
 ```
 
-This deletes the daily lab namespace if it exists and scales the node group to:
+This keeps the EKS control plane and Terraform state, but scales the node group
+to:
 
 ```text
 minSize=0
@@ -302,53 +200,68 @@ desiredSize=0
 maxSize=2
 ```
 
-## Manual Practice Commands
-
-After running `practice.sh`, use these commands for extra practice:
+Start worker nodes again:
 
 ```bash
-kubectl get all -n daily-lab
-kubectl get pods -n daily-lab -o wide
-kubectl describe deployment nginx-web -n daily-lab
-kubectl get service,endpointslice -n daily-lab
-kubectl scale deployment nginx-web --replicas=3 -n daily-lab
-kubectl rollout status deployment/nginx-web -n daily-lab
-kubectl set image deployment/nginx-web nginx=nginx:latest -n daily-lab
-kubectl rollout history deployment/nginx-web -n daily-lab
-kubectl rollout undo deployment/nginx-web -n daily-lab
+./start.sh
 ```
 
-## Permanent Delete
+## Destroy Everything
 
-Use this only when you want to permanently delete the EKS cluster:
+For complete removal steps, use:
+
+```bash
+cat DELETE-STEPS.md
+```
+
+Short version: run this from the same EC2 checkout where `terraform apply`
+created the cluster:
 
 ```bash
 ./delete-all.sh
 ```
 
-The script asks you to type `DELETE` before it runs `eksctl delete cluster`.
+Type:
 
-## Cost Note
+```text
+DESTROY
+```
 
-`stop.sh` stops the worker nodes by scaling the managed node group to zero, but it does not delete the EKS control plane. If you will not practice for several days, use `delete-all.sh` to remove the cluster completely.
+Then type `yes` when Terraform asks for approval.
+
+Important: local Terraform state is not committed. If you want to destroy from a
+different workstation, add an S3/DynamoDB remote backend first or copy the state
+securely.
+
+Verify deletion:
+
+```bash
+aws eks describe-cluster --name roboshop-dev --region us-east-1
+```
+
+Expected result after successful destroy:
+
+```text
+ResourceNotFoundException
+```
 
 ## Troubleshooting
 
-If Amazon Linux 2023 shows a `curl-minimal conflicts with curl` error, do not
-replace `curl-minimal`. The scripts use the existing `curl` command from
-`curl-minimal` and install only the missing helper packages.
-
-If no nodes are Ready:
+If `kubectl` tries `localhost:8080`, kubeconfig is missing. Run:
 
 ```bash
-./status.sh
-```
-
-If AWS authentication fails:
-
-```bash
-aws sts get-caller-identity
 aws eks update-kubeconfig --name roboshop-dev --region us-east-1
 ```
 
-If kubectl says `Unauthorized`, check AWS/EKS authentication and kubeconfig. If kubectl says `Forbidden`, authentication worked but Kubernetes RBAC is denying the action.
+If Amazon Linux 2023 shows `curl-minimal conflicts with curl`, do not replace
+`curl-minimal`. These scripts use the existing `curl` command from
+`curl-minimal` and install only missing helper packages.
+
+If Terraform fails halfway, check:
+
+```bash
+terraform -chdir=terraform state list
+terraform -chdir=terraform plan
+```
+
+If old `eksctl` stacks return, clean them before reusing the same cluster name.

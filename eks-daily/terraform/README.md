@@ -73,6 +73,12 @@ Destroy when finished:
 terraform destroy
 ```
 
+For the full cleanup checklist, see:
+
+```bash
+cat ../DELETE-STEPS.md
+```
+
 ## Important
 
 - Delete old `eksctl-roboshop-dev-*` CloudFormation stacks before using this.
