@@ -6,7 +6,14 @@ Daily helper scripts for starting an existing EKS lab, checking health, running 
 
 | File | Purpose |
 | --- | --- |
+| `setup-workstation-cluster.sh` | One-file EC2 workstation and EKS cluster setup flow. |
+| `install-tools.sh` | Installs AWS CLI, kubectl, and eksctl together. |
+| `install-aws-cli.sh` | Installs or updates AWS CLI v2 on Linux. |
+| `install-kubectl.sh` | Installs kubectl on Linux. |
+| `install-eksctl.sh` | Installs eksctl on Linux. |
+| `cluster.yaml` | Optional eksctl config-file version of the cluster setup. |
 | `config.sh` | Shared cluster, node group, region, and namespace settings. |
+| `create-cluster.sh` | Creates the EKS cluster for the first time. |
 | `start.sh` | Starts the managed node group with two worker nodes. |
 | `status.sh` | Checks AWS identity, EKS cluster, node group, nodes, system Pods, and lab resources. |
 | `practice.sh` | Runs daily kubectl practice in the `daily-lab` namespace. |
@@ -14,9 +21,78 @@ Daily helper scripts for starting an existing EKS lab, checking health, running 
 | `stop.sh` | Deletes daily resources and scales worker nodes down to zero. |
 | `delete-all.sh` | Permanently deletes the EKS cluster. |
 
-## Prerequisites
+## Clone Correctly
 
-Install and configure these tools before running the scripts:
+Do not clone the GitHub folder URL. Clone the repository, then enter
+`eks-daily`:
+
+```bash
+git clone https://github.com/GorleJansi/PROJECT-KUBERNETES.git
+cd PROJECT-KUBERNETES/eks-daily
+```
+
+If you want only this folder:
+
+```bash
+git clone --filter=blob:none --sparse https://github.com/GorleJansi/PROJECT-KUBERNETES.git
+cd PROJECT-KUBERNETES
+git sparse-checkout set eks-daily
+cd eks-daily
+```
+
+## One-File EC2 Setup
+
+Use this on a fresh EC2 workstation when you want one script for everything:
+
+```bash
+./setup-workstation-cluster.sh
+```
+
+This one file does the full flow:
+
+1. Installs required workstation tools: AWS CLI, kubectl, and eksctl.
+2. Checks AWS identity with `aws sts get-caller-identity`.
+3. Creates the EKS control plane if it does not exist.
+4. Waits until the EKS cluster is `ACTIVE`.
+5. Creates the managed node group if it does not exist.
+6. Scales the node group to the configured desired node count.
+7. Updates kubeconfig.
+8. Waits for Kubernetes nodes to become `Ready`.
+9. Prints node and node group status.
+
+The script asks you to type `SETUP` before it installs tools or creates AWS
+resources.
+
+Use this when the cluster exists but the node group is missing too. It will
+reuse the active cluster and create the missing managed node group.
+
+## Install Tools Only
+
+Run this on the EC2 instance before creating the cluster:
+
+```bash
+./install-tools.sh
+```
+
+This installs:
+
+| Tool | Script |
+| --- | --- |
+| AWS CLI v2 | `install-aws-cli.sh` |
+| kubectl | `install-kubectl.sh` |
+| eksctl | `install-eksctl.sh` |
+
+You can also run them one by one:
+
+```bash
+./install-aws-cli.sh
+./install-kubectl.sh
+./install-eksctl.sh
+```
+
+## Prerequisites Check
+
+Check the tools:
 
 ```bash
 aws --version
@@ -30,6 +106,70 @@ The AWS CLI must be authenticated to the account that owns the EKS cluster:
 aws sts get-caller-identity
 ```
 
+## Cluster Setup Only
+
+Run all commands from this folder:
+
+```bash
+cd eks-daily
+```
+
+Create the EKS cluster:
+
+```bash
+./create-cluster.sh
+```
+
+This script assumes AWS CLI, kubectl, and eksctl already exist. For a fresh EC2
+workstation, prefer:
+
+```bash
+./setup-workstation-cluster.sh
+```
+
+The direct `eksctl` command is:
+
+```bash
+eksctl create cluster \
+  --name roboshop-dev \
+  --region us-east-1 \
+  --managed \
+  --nodes 2 \
+  --node-type t3.medium
+```
+
+`create-cluster.sh` uses the same setup and also adds
+`--nodegroup-name roboshop-dev-ng`, `--nodes-min 0`, and `--nodes-max 2`,
+because the daily `start.sh`, `status.sh`, and `stop.sh` scripts need a stable
+node group name and a node group that can scale down after practice.
+
+The script creates:
+
+| Setting | Value |
+| --- | --- |
+| Cluster name | `roboshop-dev` |
+| Region | `us-east-1` |
+| Node group | `roboshop-dev-ng` |
+| Capacity type | Managed on-demand node group |
+| Instance type | `t3.medium` |
+| Node size | min `0`, desired `2`, max `2` |
+
+The script asks you to type `CREATE` before it creates AWS resources.
+
+If the control plane already exists but the node group is missing,
+`create-cluster.sh` creates the missing node group and continues.
+
+After creation, it updates kubeconfig and checks:
+
+```bash
+kubectl get nodes
+eksctl get nodegroup --cluster roboshop-dev --region us-east-1
+```
+
+Important: EKS control plane and EC2 worker nodes can create AWS charges. Use
+`./stop.sh` after practice, or `./delete-all.sh` when you no longer need the
+cluster.
+
 ## Configuration
 
 Default values are in `config.sh`:
@@ -37,9 +177,10 @@ Default values are in `config.sh`:
 ```bash
 AWS_REGION=us-east-1
 CLUSTER_NAME=roboshop-dev
-NODEGROUP_NAME=roboshop-free-spot-ng
+NODEGROUP_NAME=roboshop-dev-ng
 DESIRED_NODES=2
 MAX_NODES=2
+NODE_TYPE=t3.medium
 LAB_NAMESPACE=daily-lab
 ```
 
