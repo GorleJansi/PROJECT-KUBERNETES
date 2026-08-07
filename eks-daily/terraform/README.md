@@ -25,7 +25,7 @@ terraform destroy
 | Public subnets | `roboshop-dev-public-us-east-1a`, `roboshop-dev-public-us-east-1b` |
 | EKS cluster | `roboshop-dev` |
 | Managed node group | `roboshop-dev-ng` |
-| Node instance type | `t3.medium` |
+| Node instance type | `t3.micro` |
 | Desired nodes | `2` |
 | EKS add-ons | `vpc-cni`, `kube-proxy`, `coredns` |
 

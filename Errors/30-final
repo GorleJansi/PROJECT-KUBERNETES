@@ -1,0 +1,7 @@
+When an application is unavailable, I first confirm the affected cluster, namespace, service and deployment. I check Deployment, ReplicaSet and Pod status, then inspect Pod events and previous container logs.
+
+If Pods are unhealthy, I investigate image pulls, application errors, ConfigMaps, Secrets, probes and resource limits. If Pods are healthy, I move to the networking path: Service selectors, EndpointSlices, target ports, DNS, NetworkPolicies and Ingress.
+
+For storage-related errors, I check PVC, PV, StorageClass and CSI components. For broader failures, I check node conditions, kubelet, container runtime and resource pressure.
+
+During a production incident, I restore service first through scaling, rollback or traffic switching, and then perform root-cause analysis and implement preventive monitoring.

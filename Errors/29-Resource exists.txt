@@ -1,0 +1,17 @@
+Resource exists but application is not updated
+
+update deployment,configs ,env but application is not update
+
+cause:
+    deployment rollout only if change in imagetag for small changes tag version might not change
+    Image tag did not change
+    imagePullPolicy reused a cached mutable tag
+    Updated the wrong namespace
+    Connected to the wrong cluster
+    Updated the wrong Deployment
+
+troubleshooting:
+    kubectl config current-context
+    kubectl get deployment -A | grep frontend   --> get deployment frontend from all namespace check which namespace it exists
+     kubectl get deployment frontend -n production -o jsonpath='{.spec.template.spec.containers[*].image}'   -->check which image deoplyment is using
+     kubectl rollout history deployment/frontend -n production

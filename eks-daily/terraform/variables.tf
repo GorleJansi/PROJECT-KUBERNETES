@@ -25,7 +25,7 @@ variable "node_group_name" {
 variable "node_instance_type" {
   description = "EC2 instance type for worker nodes."
   type        = string
-  default     = "t3.medium"
+  default     = "t3.micro"
 }
 
 variable "node_min_size" {

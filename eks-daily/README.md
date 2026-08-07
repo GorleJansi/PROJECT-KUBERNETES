@@ -265,3 +265,11 @@ terraform -chdir=terraform plan
 ```
 
 If old `eksctl` stacks return, clean them before reusing the same cluster name.
+
+If node group creation fails with `The specified instance type is not eligible
+for Free Tier`, keep the default `NODE_TYPE=t3.micro` from `config.sh`, then run:
+
+```bash
+cd terraform
+terraform apply -replace=aws_eks_node_group.this
+```

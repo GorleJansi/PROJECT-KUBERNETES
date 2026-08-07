@@ -8,6 +8,6 @@ export NODEGROUP_NAME="${NODEGROUP_NAME:-roboshop-dev-ng}"
 
 export DESIRED_NODES="${DESIRED_NODES:-2}"
 export MAX_NODES="${MAX_NODES:-2}"
-export NODE_TYPE="${NODE_TYPE:-t3.medium}"
+export NODE_TYPE="${NODE_TYPE:-t3.micro}"
 
 export LAB_NAMESPACE="${LAB_NAMESPACE:-daily-lab}"

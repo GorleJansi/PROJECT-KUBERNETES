@@ -1,0 +1,47 @@
+# Cluster and context
+kubectl config current-context
+kubectl cluster-info
+kubectl get nodes -o wide
+
+# Workload
+kubectl get deploy,rs,pods -n <namespace>
+kubectl get pods -n <namespace> -o wide
+kubectl describe pod <pod> -n <namespace>
+
+# Logs
+kubectl logs <pod> -n <namespace>
+kubectl logs <pod> -c <container> -n <namespace>
+kubectl logs <pod> --previous -n <namespace>
+kubectl logs <pod> --since=30m -n <namespace>
+
+# Events
+kubectl get events -n <namespace> --sort-by=.lastTimestamp
+
+# Networking
+kubectl get svc -n <namespace>
+kubectl get endpointslices -n <namespace>
+kubectl get ingress -n <namespace>
+kubectl get networkpolicy -n <namespace>
+
+# Storage
+kubectl get pvc -n <namespace>
+kubectl get pv
+kubectl get storageclass
+
+# Resources
+kubectl top nodes
+kubectl top pods -A
+kubectl describe node <node>
+
+# Deployment
+kubectl rollout status deployment/<name> -n <namespace>
+kubectl rollout history deployment/<name> -n <namespace>
+kubectl rollout undo deployment/<name> -n <namespace>
+
+# Authorization
+kubectl auth can-i list pods -n <namespace>
+
+# Interactive troubleshooting
+kubectl exec -it <pod> -n <namespace> -- sh
+kubectl debug <pod> -it --image=ubuntu
+kubectl debug node/<node> -it --image=ubuntu
