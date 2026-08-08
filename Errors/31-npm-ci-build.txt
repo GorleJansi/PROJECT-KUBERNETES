@@ -1,0 +1,22 @@
+Node.js CI build dependency flow
+
+Use this when a frontend or Node.js service is built in Jenkins, GitHub Actions,
+Docker, or any repeatable CI/CD environment.
+
+commands:
+    npm ci
+    npm run build
+
+meaning:
+    npm ci installs dependencies exactly from package-lock.json
+    npm ci removes node_modules before installing
+    npm ci fails when package.json and package-lock.json do not match
+    npm run build runs the build script from package.json
+    npm run build usually creates the production-ready app output
+
+troubleshooting:
+    check that package-lock.json exists
+    check package.json has a scripts.build entry
+    run npm install locally only when dependencies need to be changed
+    commit package-lock.json after dependency changes
+    in CI/CD prefer npm ci before npm run build
